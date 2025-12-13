@@ -1,458 +1,582 @@
-
 <!doctype html>
 <html lang="zh-Hant">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Bank of Taiwan｜年終尾牙抽獎</title>
   <style>
-    :root{
-      --brand:#9A0036;      /* 主色：紅 */
-      --accent:#D6A33A;     /* 強調：金 */
-      --pink:#EEBAC0;       /* 輔助：粉 */
-      --magenta:#941C61;    /* 輔助：紫紅 */
-      --bg:#ffffff;         /* 白 */
-      --split:#F5F5F5;      /* 淺灰 */
-      --text:#333333;       /* 深灰文字 */
-      --glass: rgba(255,255,255,.22);
-      --shadow: 0 20px 50px rgba(0,0,0,.18);
+    :root {
+      --brand: #9A0036;
+      /* 主色：紅 */
+      --accent: #D6A33A;
+      /* 強調：金 */
+      --pink: #EEBAC0;
+      /* 輔助：粉 */
+      --magenta: #941C61;
+      /* 輔助：紫紅 */
+      --bg: #ffffff;
+      /* 白 */
+      --split: #F5F5F5;
+      /* 淺灰 */
+      --text: #333333;
+      /* 深灰文字 */
+      --glass: rgba(255, 255, 255, .22);
+      --shadow: 0 20px 50px rgba(0, 0, 0, .18);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-                   "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
-      color:var(--text);
+        "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(1200px 600px at 10% 0%, rgba(154,0,54,.10), transparent 60%),
-        radial-gradient(900px 500px at 100% 20%, rgba(148,28,97,.10), transparent 55%),
+        radial-gradient(1200px 600px at 10% 0%, rgba(154, 0, 54, .10), transparent 60%),
+        radial-gradient(900px 500px at 100% 20%, rgba(148, 28, 97, .10), transparent 55%),
         linear-gradient(180deg, #fff, #fff);
-      overflow-x:hidden;
+      overflow-x: hidden;
     }
 
     /* Header */
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:50;
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
       backdrop-filter: blur(10px);
-      background: rgba(255,255,255,.75);
-      border-bottom:1px solid rgba(0,0,0,.06);
+      background: rgba(255, 255, 255, .75);
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
     }
-    .topbar-inner{
-      max-width:1100px;
-      margin:0 auto;
-      padding:14px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+
+    .topbar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
     }
-    .logo{
-      width:42px;height:42px;
-      border-radius:14px;
+
+    .logo-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 10px 25px rgba(154, 0, 54, .25);
+      border: 1px solid rgba(255, 255, 255, .35);
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 45%),
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .45), transparent 45%),
         linear-gradient(135deg, var(--brand), var(--magenta));
-      box-shadow: 0 10px 25px rgba(154,0,54,.25);
-      border:1px solid rgba(255,255,255,.35);
-      position:relative;
-      overflow:hidden;
+      box-shadow: 0 10px 25px rgba(154, 0, 54, .25);
+      border: 1px solid rgba(255, 255, 255, .35);
+      position: relative;
+      overflow: hidden;
     }
-    .logo:after{
-      content:"";
-      position:absolute; inset:-40%;
-      background: conic-gradient(from 0deg, rgba(214,163,58,.0), rgba(214,163,58,.55), rgba(214,163,58,.0));
+
+    .logo:after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, rgba(214, 163, 58, .0), rgba(214, 163, 58, .55), rgba(214, 163, 58, .0));
       animation: shine 3.2s linear infinite;
       transform: rotate(18deg);
-      opacity:.9;
-    }
-    @keyframes shine{
-      to{ transform: rotate(378deg); }
-    }
-    .brand h1{
-      margin:0;
-      font-size:16px;
-      letter-spacing:.3px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .brand small{
-      display:block;
-      color:rgba(51,51,51,.72);
-      font-size:12px;
-      margin-top:2px;
+      opacity: .9;
     }
 
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+    @keyframes shine {
+      to {
+        transform: rotate(378deg);
+      }
     }
-    .chip{
-      display:flex;
-      align-items:center;
-      gap:8px;
+
+    .brand h1 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: .3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand small {
+      display: block;
+      color: rgba(51, 51, 51, .72);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       background: var(--split);
-      border:1px solid rgba(0,0,0,.06);
-      border-radius:12px;
-      padding:8px 10px;
-    }
-    .chip label{
-      font-size:12px;
-      color: rgba(51,51,51,.75);
-    }
-    .chip input{
-      width:88px;
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid rgba(0,0,0,.10);
-      background:#fff;
-      outline:none;
-      font-weight:700;
-      color:var(--text);
-    }
-    .chip input:focus{
-      border-color: rgba(154,0,54,.35);
-      box-shadow: 0 0 0 4px rgba(154,0,54,.10);
+      border: 1px solid rgba(0, 0, 0, .06);
+      border-radius: 12px;
+      padding: 8px 10px;
     }
 
-    .btn{
-      appearance:none;
-      border:0;
-      border-radius:14px;
-      padding:12px 16px;
-      font-weight:800;
-      letter-spacing:.2px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      box-shadow: 0 14px 28px rgba(0,0,0,.12);
+    .chip label {
+      font-size: 12px;
+      color: rgba(51, 51, 51, .75);
+    }
+
+    .chip input {
+      width: 88px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, .10);
+      background: #fff;
+      outline: none;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .chip input:focus {
+      border-color: rgba(154, 0, 54, .35);
+      box-shadow: 0 0 0 4px rgba(154, 0, 54, .10);
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, .12);
       transform: translateZ(0);
       transition: transform .15s ease, filter .15s ease, box-shadow .15s ease, opacity .15s ease;
-      user-select:none;
+      user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
-    .btn:active{ transform: translateY(1px) scale(.99); }
-    .btn-primary{
+
+    .btn:active {
+      transform: translateY(1px) scale(.99);
+    }
+
+    .btn-primary {
       background:
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,.35), transparent 40%),
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, .35), transparent 40%),
         linear-gradient(135deg, var(--accent), #f1c15b 35%, var(--brand));
-      color:#fff;
-      text-shadow:0 1px 0 rgba(0,0,0,.2);
-      border:1px solid rgba(255,255,255,.22);
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, .2);
+      border: 1px solid rgba(255, 255, 255, .22);
     }
-    .btn-secondary{
+
+    .btn-secondary {
       background: linear-gradient(135deg, var(--magenta), var(--brand));
-      color:#fff;
-      border:1px solid rgba(255,255,255,.18);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .18);
     }
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      box-shadow:none;
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      box-shadow: none;
     }
 
     /* Layout */
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding:18px;
-      padding-bottom:88px; /* footer space */
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px;
+      padding-bottom: 88px;
+      /* footer space */
     }
 
-    .hero{
-      margin-top:14px;
-      display:grid;
+    .hero {
+      margin-top: 14px;
+      display: grid;
       grid-template-columns: 1.1fr .9fr;
-      gap:16px;
-    }
-    @media (max-width: 980px){
-      .hero{ grid-template-columns:1fr; }
+      gap: 16px;
     }
 
-    .panel{
-      background: rgba(255,255,255,.72);
-      border:1px solid rgba(0,0,0,.06);
-      border-radius:18px;
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(0, 0, 0, .06);
+      border-radius: 18px;
       box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .panel-header{
-      padding:16px 16px 10px 16px;
-      background: linear-gradient(180deg, rgba(245,245,245,.85), rgba(255,255,255,0));
-      border-bottom:1px solid rgba(0,0,0,.06);
-    }
-    .panel-header h2{
-      margin:0;
-      font-size:15px;
-      letter-spacing:.2px;
-    }
-    .panel-header p{
-      margin:8px 0 0;
-      font-size:12.5px;
-      color: rgba(51,51,51,.72);
-      line-height:1.6;
+      overflow: hidden;
     }
 
-    .panel-body{ padding:16px; }
+    .panel-header {
+      padding: 16px 16px 10px 16px;
+      background: linear-gradient(180deg, rgba(245, 245, 245, .85), rgba(255, 255, 255, 0));
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: .2px;
+    }
+
+    .panel-header p {
+      margin: 8px 0 0;
+      font-size: 12.5px;
+      color: rgba(51, 51, 51, .72);
+      line-height: 1.6;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
 
     /* Result numbers strip (top) */
-    .result-strip{
-      min-height:74px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      padding:12px 16px 16px 16px;
+    .result-strip {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px 16px 16px 16px;
     }
-    .result-strip .hint{
-      color:rgba(51,51,51,.65);
-      font-size:13px;
+
+    .result-strip .hint {
+      color: rgba(51, 51, 51, .65);
+      font-size: 13px;
     }
-    .num-pill{
-      width:58px;height:58px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      font-size:20px;
-      color:#fff;
+
+    .num-pill {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: #fff;
       background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 45%),
+        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .35), transparent 45%),
         linear-gradient(135deg, var(--brand), var(--magenta));
-      border:1px solid rgba(255,255,255,.25);
-      box-shadow: 0 18px 35px rgba(154,0,54,.25);
-      position:relative;
-      overflow:hidden;
+      border: 1px solid rgba(255, 255, 255, .25);
+      box-shadow: 0 18px 35px rgba(154, 0, 54, .25);
+      position: relative;
+      overflow: hidden;
       animation: pop .55s ease both;
     }
-    .num-pill:after{
-      content:"";
-      position:absolute; inset:-40%;
-      background: conic-gradient(from 0deg, rgba(214,163,58,0), rgba(214,163,58,.70), rgba(214,163,58,0));
+
+    .num-pill:after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, rgba(214, 163, 58, 0), rgba(214, 163, 58, .70), rgba(214, 163, 58, 0));
       filter: blur(0.2px);
       animation: sweep 1.2s linear infinite;
-      opacity:.75;
-      pointer-events:none;
+      opacity: .75;
+      pointer-events: none;
     }
-    @keyframes pop{
-      0%{ transform: translateY(10px) scale(.7); opacity:0; filter: blur(2px); }
-      60%{ transform: translateY(-2px) scale(1.05); opacity:1; filter: blur(0); }
-      100%{ transform: translateY(0) scale(1); }
+
+    @keyframes pop {
+      0% {
+        transform: translateY(10px) scale(.7);
+        opacity: 0;
+        filter: blur(2px);
+      }
+
+      60% {
+        transform: translateY(-2px) scale(1.05);
+        opacity: 1;
+        filter: blur(0);
+      }
+
+      100% {
+        transform: translateY(0) scale(1);
+      }
     }
-    @keyframes sweep{ to{ transform: rotate(360deg); } }
+
+    @keyframes sweep {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* Lottery Machine */
-    .machine{
-      display:grid;
+    .machine {
+      display: grid;
       grid-template-rows: auto 1fr auto;
-      gap:12px;
-      padding:16px;
-    }
-    .machine-title{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .machine-title h3{
-      margin:0;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .status{
-      font-size:12px;
-      color: rgba(51,51,51,.70);
-      line-height:1.6;
-      margin-top:6px;
+      gap: 12px;
+      padding: 16px;
     }
 
-    .stage{
-      position:relative;
-      min-height:360px;
-      border-radius:18px;
+    .machine-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .machine-title h3 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+
+    .status {
+      font-size: 12px;
+      color: rgba(51, 51, 51, .70);
+      line-height: 1.6;
+      margin-top: 6px;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 360px;
+      border-radius: 18px;
       background:
-        radial-gradient(900px 360px at 50% 30%, rgba(238,186,192,.30), transparent 60%),
-        radial-gradient(700px 300px at 30% 70%, rgba(154,0,54,.12), transparent 60%),
-        linear-gradient(180deg, rgba(245,245,245,.9), rgba(255,255,255,.9));
-      border:1px solid rgba(0,0,0,.06);
-      overflow:hidden;
+        radial-gradient(900px 360px at 50% 30%, rgba(238, 186, 192, .30), transparent 60%),
+        radial-gradient(700px 300px at 30% 70%, rgba(154, 0, 54, .12), transparent 60%),
+        linear-gradient(180deg, rgba(245, 245, 245, .9), rgba(255, 255, 255, .9));
+      border: 1px solid rgba(0, 0, 0, .06);
+      overflow: hidden;
     }
 
     /* Confetti sparkles */
-    .spark{
-      position:absolute;
-      width:8px;height:8px;
-      border-radius:2px;
+    .spark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
       background: var(--accent);
-      opacity:0;
-      transform: translate(-50%,-50%) rotate(0deg);
-      pointer-events:none;
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(0deg);
+      pointer-events: none;
     }
-    .spark.show{
+
+    .spark.show {
       animation: spark 900ms ease-out both;
     }
-    @keyframes spark{
-      0%{ opacity:0; transform: translate(-50%,-50%) scale(.4) rotate(0deg); filter: blur(1px); }
-      15%{ opacity:1; }
-      100%{ opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2) rotate(220deg); filter: blur(0); }
+
+    @keyframes spark {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(.4) rotate(0deg);
+        filter: blur(1px);
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2) rotate(220deg);
+        filter: blur(0);
+      }
     }
 
     /* Glass sphere */
-    .sphere-wrap{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      padding:16px;
+    .sphere-wrap {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px;
     }
-    .sphere{
-      width:min(330px, 80vw);
+
+    .sphere {
+      width: min(330px, 80vw);
       aspect-ratio: 1 / 1;
-      border-radius:50%;
-      position:relative;
+      border-radius: 50%;
+      position: relative;
       background:
-        radial-gradient(circle at 28% 22%, rgba(255,255,255,.70), rgba(255,255,255,.18) 35%, rgba(255,255,255,.07) 55%, rgba(255,255,255,.0) 72%),
-        radial-gradient(circle at 60% 70%, rgba(154,0,54,.16), rgba(148,28,97,.10) 38%, rgba(0,0,0,.0) 72%),
-        linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.55);
+        radial-gradient(circle at 28% 22%, rgba(255, 255, 255, .70), rgba(255, 255, 255, .18) 35%, rgba(255, 255, 255, .07) 55%, rgba(255, 255, 255, .0) 72%),
+        radial-gradient(circle at 60% 70%, rgba(154, 0, 54, .16), rgba(148, 28, 97, .10) 38%, rgba(0, 0, 0, .0) 72%),
+        linear-gradient(135deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, .02));
+      border: 1px solid rgba(255, 255, 255, .55);
       box-shadow:
-        0 30px 70px rgba(0,0,0,.18),
-        inset 0 0 0 1px rgba(0,0,0,.06);
-      overflow:hidden;
+        0 30px 70px rgba(0, 0, 0, .18),
+        inset 0 0 0 1px rgba(0, 0, 0, .06);
+      overflow: hidden;
       backdrop-filter: blur(2px);
     }
-    .sphere:before{
-      content:"";
-      position:absolute;
-      inset:-30%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 55%);
+
+    .sphere:before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .55), transparent 55%);
       transform: rotate(15deg);
-      opacity:.7;
-      pointer-events:none;
+      opacity: .7;
+      pointer-events: none;
     }
-    .sphere:after{
-      content:"";
-      position:absolute;
-      inset:0;
+
+    .sphere:after {
+      content: "";
+      position: absolute;
+      inset: 0;
       background:
-        radial-gradient(circle at 50% 100%, rgba(214,163,58,.18), transparent 55%),
-        radial-gradient(circle at 10% 80%, rgba(238,186,192,.22), transparent 50%);
-      pointer-events:none;
+        radial-gradient(circle at 50% 100%, rgba(214, 163, 58, .18), transparent 55%),
+        radial-gradient(circle at 10% 80%, rgba(238, 186, 192, .22), transparent 50%);
+      pointer-events: none;
       mix-blend-mode: screen;
     }
 
     /* Balls */
-    .ball{
-      position:absolute;
-      width:44px;height:44px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      color:#fff;
-      text-shadow:0 1px 0 rgba(0,0,0,.25);
+    .ball {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, .25);
       background:
-        radial-gradient(circle at 28% 22%, rgba(255,255,255,.55), transparent 40%),
+        radial-gradient(circle at 28% 22%, rgba(255, 255, 255, .55), transparent 40%),
         linear-gradient(135deg, var(--brand), var(--magenta));
-      border:1px solid rgba(255,255,255,.22);
-      box-shadow: 0 14px 22px rgba(154,0,54,.18);
-      user-select:none;
+      border: 1px solid rgba(255, 255, 255, .22);
+      box-shadow: 0 14px 22px rgba(154, 0, 54, .18);
+      user-select: none;
       will-change: transform;
       filter: saturate(1.05);
     }
-    .ball.gold{
+
+    .ball.gold {
       background:
-        radial-gradient(circle at 28% 22%, rgba(255,255,255,.55), transparent 40%),
+        radial-gradient(circle at 28% 22%, rgba(255, 255, 255, .55), transparent 40%),
         linear-gradient(135deg, var(--accent), #f3cc74, var(--brand));
-      box-shadow: 0 18px 30px rgba(214,163,58,.22);
+      box-shadow: 0 18px 30px rgba(214, 163, 58, .22);
     }
 
     /* Output window */
-    .output{
-      position:absolute;
-      left:16px;
-      right:16px;
-      bottom:16px;
-      padding:14px 14px;
-      border-radius:16px;
-      background: rgba(255,255,255,.72);
-      border:1px solid rgba(0,0,0,.06);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+    .output {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(0, 0, 0, .06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-    .output .now{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      min-width:0;
+
+    .output .now {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
     }
-    .output .now b{
-      font-size:13px;
-      letter-spacing:.2px;
+
+    .output .now b {
+      font-size: 13px;
+      letter-spacing: .2px;
     }
-    .output .now span{
-      font-size:12px;
-      color: rgba(51,51,51,.7);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+
+    .output .now span {
+      font-size: 12px;
+      color: rgba(51, 51, 51, .7);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .big-number{
-      width:88px;height:60px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      font-weight:1000;
-      font-size:28px;
-      color:#fff;
+
+    .big-number {
+      width: 88px;
+      height: 60px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 1000;
+      font-size: 28px;
+      color: #fff;
       background:
-        radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 45%),
+        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .35), transparent 45%),
         linear-gradient(135deg, var(--brand), var(--magenta));
-      border:1px solid rgba(255,255,255,.25);
-      box-shadow: 0 18px 35px rgba(154,0,54,.22);
+      border: 1px solid rgba(255, 255, 255, .25);
+      box-shadow: 0 18px 35px rgba(154, 0, 54, .22);
     }
-    .big-number.pulse{
+
+    .big-number.pulse {
       animation: pulse 700ms ease both;
     }
-    @keyframes pulse{
-      0%{ transform: scale(.88); filter: blur(.6px); opacity:.0; }
-      45%{ transform: scale(1.08); filter: blur(0); opacity:1; }
-      100%{ transform: scale(1); opacity:1; }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(.88);
+        filter: blur(.6px);
+        opacity: .0;
+      }
+
+      45% {
+        transform: scale(1.08);
+        filter: blur(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     /* Footer */
-    footer{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      background: rgba(255,255,255,.9);
+    footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, .9);
       backdrop-filter: blur(10px);
-      border-top:1px solid rgba(0,0,0,.06);
-      padding:12px 18px;
-      z-index:60;
-      font-size:12px;
-      color: rgba(51,51,51,.72);
-      text-align:center;
+      border-top: 1px solid rgba(0, 0, 0, .06);
+      padding: 12px 18px;
+      z-index: 60;
+      font-size: 12px;
+      color: rgba(51, 51, 51, .72);
+      text-align: center;
     }
 
     /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      *{ animation:none !important; transition:none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
@@ -461,10 +585,11 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
+        <!-- 改為 img 標籤 -->
+        <img src="./logo.png" alt="Bank of Taiwan Logo" class="logo-img" />
         <div style="min-width:0">
-          <h1>Bank of Taiwan｜年終尾牙抽獎程式</h1>
-          <small>透明球體・號碼球滾動・逐顆揭曉・音效特效</small>
+          <h1>Bank of Taiwan｜年終尾牙抽獎</h1>
+          <small>祝您中大獎!</small>
         </div>
       </div>
 
@@ -537,9 +662,10 @@
           <h2>規則與顯示</h2>
           <p>本頁示範：從 1..M 的號碼球中，不重複抽出 N 個。每顆號碼都有揭曉特效與提示音。</p>
         </div>
-                <div class="panel-body">
+        <div class="panel-body">
           <div style="display:grid; gap:12px;">
-            <div style="background:var(--split); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
+            <div
+              style="background:var(--split); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">抽獎設定</div>
               <ul style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
                 <li><b>M</b>：總球數（1..M）</li>
@@ -557,7 +683,8 @@
               </ol>
             </div>
 
-            <div style="background:linear-gradient(135deg, rgba(214,163,58,.16), rgba(154,0,54,.08)); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
+            <div
+              style="background:linear-gradient(135deg, rgba(214,163,58,.16), rgba(154,0,54,.08)); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; margin-bottom:6px;">注意</div>
               <div style="color:rgba(51,51,51,.78); line-height:1.8; font-size:13px;">
                 若瀏覽器阻擋自動播放音效，第一次請務必由使用者點擊「開始抽獎」來啟用音訊。
@@ -569,21 +696,21 @@
     </div> <!-- hero end -->
   </div> <!-- wrap end -->
 
-  <footer>版權所有： ©  Dunk</footer>
+  <footer>版權所有： © Dunk</footer>
 
   <script>
     // ===== Utilities =====
     const $ = (sel) => document.querySelector(sel);
 
-    function clampInt(v, min, max){
+    function clampInt(v, min, max) {
       const n = Math.floor(Number(v));
       if (Number.isNaN(n)) return min;
       return Math.min(max, Math.max(min, n));
     }
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    function shuffle(arr){
-      for (let i = arr.length - 1; i > 0; i--){
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
@@ -594,15 +721,15 @@
     const SFX = (() => {
       let ctx = null;
 
-      function ensure(){
-        if (!ctx){
+      function ensure() {
+        if (!ctx) {
           const AC = window.AudioContext || window.webkitAudioContext;
           ctx = new AC();
         }
         return ctx;
       }
 
-      function beep({freq=880, dur=0.08, type="sine", gain=0.08, detune=0} = {}){
+      function beep({ freq = 880, dur = 0.08, type = "sine", gain = 0.08, detune = 0 } = {}) {
         const c = ensure();
         const t0 = c.currentTime;
 
@@ -624,7 +751,7 @@
         o.stop(t0 + dur + 0.02);
       }
 
-      function whoosh(){
+      function whoosh() {
         // quick filtered noise burst
         const c = ensure();
         const t0 = c.currentTime;
@@ -632,8 +759,8 @@
         const bufferSize = 0.12 * c.sampleRate;
         const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
         const data = buffer.getChannelData(0);
-        for (let i=0; i<data.length; i++){
-          data[i] = (Math.random()*2 - 1) * (1 - i/data.length);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
         }
 
         const src = c.createBufferSource();
@@ -657,15 +784,15 @@
         src.stop(t0 + 0.14);
       }
 
-      function win(){
+      function win() {
         // short "jackpot" arpeggio
-        beep({freq: 784, dur: 0.08, type:"triangle", gain:0.08});
-        setTimeout(() => beep({freq: 988, dur: 0.10, type:"triangle", gain:0.09}), 90);
-        setTimeout(() => beep({freq: 1175, dur: 0.12, type:"triangle", gain:0.10}), 190);
-        setTimeout(() => beep({freq: 1568, dur: 0.14, type:"sine", gain:0.10}), 320);
+        beep({ freq: 784, dur: 0.08, type: "triangle", gain: 0.08 });
+        setTimeout(() => beep({ freq: 988, dur: 0.10, type: "triangle", gain: 0.09 }), 90);
+        setTimeout(() => beep({ freq: 1175, dur: 0.12, type: "triangle", gain: 0.10 }), 190);
+        setTimeout(() => beep({ freq: 1568, dur: 0.14, type: "sine", gain: 0.10 }), 320);
       }
 
-      async function resumeIfNeeded(){
+      async function resumeIfNeeded() {
         const c = ensure();
         if (c.state === "suspended") await c.resume();
       }
@@ -690,31 +817,31 @@
     let rollingRAF = null;
     let isRunning = false;
 
-    function clearSphere(){
+    function clearSphere() {
       balls.forEach(b => b.remove());
       balls = [];
     }
 
-    function makeBall(num, variant="normal"){
+    function makeBall(num, variant = "normal") {
       const d = document.createElement("div");
-      d.className = "ball" + (variant==="gold" ? " gold" : "");
+      d.className = "ball" + (variant === "gold" ? " gold" : "");
       d.textContent = String(num);
       sphere.appendChild(d);
       return d;
     }
 
-    function layoutBalls(count){
+    function layoutBalls(count) {
       // Place balls randomly inside sphere initially
       const rect = sphere.getBoundingClientRect();
       const R = rect.width / 2;
       const pad = 28;
-      const center = {x: R, y: R};
+      const center = { x: R, y: R };
 
       clearSphere();
 
-      for (let i=0; i<count; i++){
+      for (let i = 0; i < count; i++) {
         const num = (i % 99) + 1; // decorative numbers
-        const d = makeBall(num, i%9===0 ? "gold" : "normal");
+        const d = makeBall(num, i % 9 === 0 ? "gold" : "normal");
 
         const angle = Math.random() * Math.PI * 2;
         const r = (R - pad) * Math.sqrt(Math.random());
@@ -723,8 +850,8 @@
 
         d.dataset.x = x;
         d.dataset.y = y;
-        d.dataset.vx = (Math.random()*2 - 1) * 1.2;
-        d.dataset.vy = (Math.random()*2 - 1) * 1.2;
+        d.dataset.vx = (Math.random() * 2 - 1) * 1.2;
+        d.dataset.vy = (Math.random() * 2 - 1) * 1.2;
 
         d.style.transform = `translate(${x - 22}px, ${y - 22}px)`;
       }
@@ -732,16 +859,16 @@
       balls = Array.from(sphere.querySelectorAll(".ball"));
     }
 
-    function rollStep(){
+    function rollStep() {
       const rect = sphere.getBoundingClientRect();
       const R = rect.width / 2;
       const pad = 26;
-      const center = {x: R, y: R};
+      const center = { x: R, y: R };
 
       // light "swirl" bias to feel like mixing
       const swirl = 0.06;
 
-      for (const d of balls){
+      for (const d of balls) {
         let x = parseFloat(d.dataset.x);
         let y = parseFloat(d.dataset.y);
         let vx = parseFloat(d.dataset.vx);
@@ -751,32 +878,32 @@
         const dx = x - center.x;
         const dy = y - center.y;
         vx += (-dy) * swirl / R;
-        vy += ( dx) * swirl / R;
+        vy += (dx) * swirl / R;
 
         // move
         x += vx;
         y += vy;
 
         // bounce against circle boundary
-        const dist = Math.sqrt((x-center.x)**2 + (y-center.y)**2);
+        const dist = Math.sqrt((x - center.x) ** 2 + (y - center.y) ** 2);
         const maxDist = R - pad;
 
-        if (dist > maxDist){
+        if (dist > maxDist) {
           // reflect velocity
-          const nx = (x-center.x) / dist;
-          const ny = (y-center.y) / dist;
+          const nx = (x - center.x) / dist;
+          const ny = (y - center.y) / dist;
           // push back in
           x = center.x + nx * maxDist;
           y = center.y + ny * maxDist;
 
-          const dot = vx*nx + vy*ny;
-          vx = vx - 2*dot*nx;
-          vy = vy - 2*dot*ny;
+          const dot = vx * nx + vy * ny;
+          vx = vx - 2 * dot * nx;
+          vy = vy - 2 * dot * ny;
 
           // damping / random kick
           vx *= 0.92; vy *= 0.92;
-          vx += (Math.random()*2 - 1) * 0.12;
-          vy += (Math.random()*2 - 1) * 0.12;
+          vx += (Math.random() * 2 - 1) * 0.12;
+          vy += (Math.random() * 2 - 1) * 0.12;
         }
 
         // mild friction
@@ -791,25 +918,25 @@
       rollingRAF = requestAnimationFrame(rollStep);
     }
 
-    function startRolling(){
+    function startRolling() {
       cancelAnimationFrame(rollingRAF);
       layoutBalls(18);
       rollStep();
     }
 
-    function stopRolling(){
+    function stopRolling() {
       cancelAnimationFrame(rollingRAF);
       rollingRAF = null;
     }
 
     // ===== Visual FX =====
-    function clearResultsUI(){
+    function clearResultsUI() {
       resultStrip.innerHTML = `<span class="hint">尚未開始，請按「開始抽獎」。</span>`;
       bigNumber.textContent = "--";
       nowHint.textContent = "—";
     }
 
-    function addResultPill(n){
+    function addResultPill(n) {
       const hint = resultStrip.querySelector(".hint");
       if (hint) hint.remove();
 
@@ -819,7 +946,7 @@
       resultStrip.appendChild(pill);
     }
 
-    function setBigNumber(n){
+    function setBigNumber(n) {
       bigNumber.classList.remove("pulse");
       // reflow to restart animation
       void bigNumber.offsetWidth;
@@ -827,14 +954,14 @@
       bigNumber.classList.add("pulse");
     }
 
-    function sparkBurst(x, y, count=14){
-      for (let i=0; i<count; i++){
+    function sparkBurst(x, y, count = 14) {
+      for (let i = 0; i < count; i++) {
         const s = document.createElement("div");
         s.className = "spark show";
         s.style.left = x + "px";
         s.style.top = y + "px";
-        const dx = (Math.random()*2 - 1) * 180 + "px";
-        const dy = (Math.random()*2 - 1) * 120 + "px";
+        const dx = (Math.random() * 2 - 1) * 180 + "px";
+        const dy = (Math.random() * 2 - 1) * 120 + "px";
         s.style.setProperty("--dx", dx);
         s.style.setProperty("--dy", dy);
 
@@ -849,29 +976,29 @@
     }
 
     // ===== Draw Logic =====
-    function validateMN(){
+    function validateMN() {
       let M = clampInt(elM.value, 1, 9999);
       let N = clampInt(elN.value, 1, 9999);
       if (N > M) N = M;
 
       elM.value = M;
       elN.value = N;
-      return {M, N};
+      return { M, N };
     }
 
-    function sampleWithoutReplacement(M, N){
-      const pool = Array.from({length: M}, (_, i) => i + 1);
+    function sampleWithoutReplacement(M, N) {
+      const pool = Array.from({ length: M }, (_, i) => i + 1);
       shuffle(pool);
       return pool.slice(0, N);
     }
 
-    async function runDraw(){
+    async function runDraw() {
       if (isRunning) return;
       isRunning = true;
       btnStart.disabled = true;
       btnReset.disabled = true;
 
-      const {M, N} = validateMN();
+      const { M, N } = validateMN();
 
       clearResultsUI();
       statusText.textContent = `滾動中：正在混球（M=${M}，將抽出 N=${N}）…`;
@@ -889,7 +1016,7 @@
 
       // reveal one by one
       statusText.textContent = "開獎中：逐顆揭曉…";
-      for (let i=0; i<results.length; i++){
+      for (let i = 0; i < results.length; i++) {
         const n = results[i];
 
         // small pause between numbers
@@ -901,18 +1028,18 @@
 
         setBigNumber(n);
         addResultPill(n);
-        nowHint.textContent = `第 ${i+1} 顆 / 共 ${results.length} 顆`;
+        nowHint.textContent = `第 ${i + 1} 顆 / 共 ${results.length} 顆`;
 
         // fx: spark burst near big number box position
         const rect = bigNumber.getBoundingClientRect();
         const stageRect = stage.getBoundingClientRect();
-        const cx = rect.left - stageRect.left + rect.width/2;
-        const cy = rect.top - stageRect.top + rect.height/2;
+        const cx = rect.left - stageRect.left + rect.width / 2;
+        const cy = rect.top - stageRect.top + rect.height / 2;
         sparkBurst(cx, cy, 16);
 
         // sound: "ding"
-        SFX.beep({freq: 740 + i*70, dur: 0.09, type:"sine", gain:0.085});
-        setTimeout(() => SFX.beep({freq: 990 + i*40, dur: 0.06, type:"triangle", gain:0.06}), 80);
+        SFX.beep({ freq: 740 + i * 70, dur: 0.09, type: "sine", gain: 0.085 });
+        setTimeout(() => SFX.beep({ freq: 990 + i * 40, dur: 0.06, type: "triangle", gain: 0.06 }), 80);
 
         // resume rolling lightly between reveals (keeps the "machine" alive)
         startRolling();
@@ -953,7 +1080,7 @@
     rollStep();
     // slow down idle motion by reducing vx/vy
     setTimeout(() => {
-      for (const d of balls){
+      for (const d of balls) {
         d.dataset.vx = parseFloat(d.dataset.vx) * 0.35;
         d.dataset.vy = parseFloat(d.dataset.vy) * 0.35;
       }
@@ -965,11 +1092,12 @@
     window.addEventListener("resize", () => {
       clearTimeout(resizeT);
       resizeT = setTimeout(() => {
-        if (!isRunning){
+        if (!isRunning) {
           layoutBalls(14);
         }
       }, 120);
     });
   </script>
 </body>
+
 </html>
