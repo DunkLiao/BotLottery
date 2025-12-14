@@ -977,10 +977,13 @@
       balls = [];
     }
 
-    function makeBall(num, variant = "normal") {
+    function makeBall(text, variant = "normal") {
       const d = document.createElement("div");
       d.className = "ball" + (variant === "gold" ? " gold" : "");
-      d.textContent = String(num);
+      d.textContent = String(text);
+      d.style.fontSize = "10px";
+      d.style.lineHeight = "1.2";
+      d.style.wordBreak = "break-all";
       sphere.appendChild(d);
       return d;
     }
@@ -994,9 +997,20 @@
 
       clearSphere();
 
-      for (let i = 0; i < count; i++) {
-        const num = (i % 99) + 1; // decorative numbers
-        const d = makeBall(num, i % 9 === 0 ? "gold" : "normal");
+      // 如果有參與者資料，優先使用參與者姓名；否則使用序號
+      let ballTexts = [];
+      if (participants.length > 0) {
+        // 隨機選擇參與者（最多取得 count 個）
+        const shuffledParticipants = [...participants].sort(() => Math.random() - 0.5);
+        ballTexts = shuffledParticipants.slice(0, count).map(p => p.name);
+      } else {
+        // 如果沒有參與者，使用裝飾用的序號
+        ballTexts = Array.from({ length: count }, (_, i) => String((i % 99) + 1));
+      }
+
+      for (let i = 0; i < ballTexts.length; i++) {
+        const text = ballTexts[i];
+        const d = makeBall(text, i % 9 === 0 ? "gold" : "normal");
 
         const angle = Math.random() * Math.PI * 2;
         const r = (R - pad) * Math.sqrt(Math.random());
