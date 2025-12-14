@@ -278,13 +278,17 @@
     }
 
     .num-pill {
-      width: 58px;
+      min-width: 88px;
       height: 58px;
+      padding: 0 14px;
       border-radius: 18px;
-      display: grid;
-      place-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 13px;
+      line-height: 1.3;
       color: #fff;
       background:
         radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .35), transparent 45%),
@@ -294,6 +298,7 @@
       position: relative;
       overflow: hidden;
       animation: pop .55s ease both;
+      text-align: center;
     }
 
     .num-pill:after {
@@ -517,19 +522,24 @@
     }
 
     .big-number {
-      width: 88px;
+      min-width: 120px;
       height: 60px;
+      padding: 0 14px;
       border-radius: 16px;
-      display: grid;
-      place-items: center;
-      font-weight: 1000;
-      font-size: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.4;
       color: #fff;
       background:
         radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .35), transparent 45%),
         linear-gradient(135deg, var(--brand), var(--magenta));
       border: 1px solid rgba(255, 255, 255, .25);
       box-shadow: 0 18px 35px rgba(154, 0, 54, .22);
+      text-align: center;
     }
 
     .big-number.pulse {
@@ -595,14 +605,19 @@
 
       <div class="actions">
         <div class="chip">
-          <label for="M">總球數 M</label>
-          <input id="M" type="number" min="1" max="9999" value="49" />
+          <label for="M">參與人數</label>
+          <input id="M" type="text" readonly value="0" style="width:68px; cursor:default; background:#f9f9f9;" />
         </div>
         <div class="chip">
-          <label for="N">抽出球數 N</label>
-          <input id="N" type="number" min="1" max="9999" value="6" />
+          <label for="N">抽出人數 N</label>
+          <input id="N" type="number" min="1" max="9999" value="1" />
         </div>
 
+        <label class="btn btn-secondary" for="csvUpload" style="margin:0; cursor:pointer;">
+          📁 上傳CSV
+          <input type="file" id="csvUpload" accept=".csv" style="display:none;" />
+        </label>
+        <button class="btn btn-secondary" id="btnClear" type="button">清除資料</button>
         <button class="btn btn-secondary" id="btnReset" type="button">重置</button>
         <button class="btn btn-primary" id="btnStart" type="button">開始抽獎</button>
       </div>
@@ -613,7 +628,7 @@
     <div class="panel">
       <div class="panel-header">
         <h2>抽獎結果（依序揭曉）</h2>
-        <p>每顆號碼會在動畫後逐顆開出並上方顯示；可重複抽獎。請先設定 M（總球數）與 N（抽出球數）。</p>
+        <p>每位中獎者會在動畫後逐一揭曉並顯示於上方。請先上傳包含「員工編號」和「姓名」的CSV檔案，再設定抽出人數 N。</p>
       </div>
       <div class="result-strip" id="resultStrip">
         <span class="hint">尚未開始，請按「開始抽獎」。</span>
@@ -668,18 +683,21 @@
               style="background:var(--split); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">抽獎設定</div>
               <ul style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
-                <li><b>M</b>：總球數（1..M）</li>
-                <li><b>N</b>：要抽出的球數（不重複抽取）</li>
-                <li>限制：N 不能大於 M</li>
+                <li><b>CSV格式</b>：第一欄「員工編號」，第二欄「姓名」</li>
+                <li><b>參與人數</b>：自動從上傳的CSV讀取</li>
+                <li><b>N</b>：要抽出的人數（不重複抽取）</li>
+                <li>限制：N 不能大於參與人數</li>
               </ul>
             </div>
 
             <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; color:var(--magenta); margin-bottom:6px;">流程</div>
               <ol style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
-                <li>先進入「滾動」動畫（透明球體內部球滾動）</li>
-                <li>逐顆揭曉：每顆之間延遲，並播放提示音與光澤特效</li>
-                <li>最後在上方列出全部結果，可按「開始抽獎」再次抽</li>
+                <li>上傳CSV檔案（資料會儲存在瀏覽器本地）</li>
+                <li>設定要抽出的人數 N</li>
+                <li>點擊「開始抽獎」進入滾動動畫</li>
+                <li>逐一揭曉中獎者：顯示員工編號與姓名，搭配音效特效</li>
+                <li>可重複抽獎，或使用「清除資料」重新上傳</li>
               </ol>
             </div>
 
@@ -805,12 +823,149 @@
     const elN = $("#N");
     const btnStart = $("#btnStart");
     const btnReset = $("#btnReset");
+    const btnClear = $("#btnClear");
+    const csvUpload = $("#csvUpload");
     const statusText = $("#statusText");
     const resultStrip = $("#resultStrip");
     const sphere = $("#sphere");
     const stage = $("#stage");
     const bigNumber = $("#bigNumber");
     const nowHint = $("#nowHint");
+
+    // ===== LocalStorage Management =====
+    const STORAGE_KEY = 'lottery_participants';
+    let participants = [];
+
+    function saveParticipants(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      participants = data;
+      updateParticipantCount();
+    }
+
+    function loadParticipants() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          participants = JSON.parse(stored);
+          updateParticipantCount();
+          return true;
+        } catch (e) {
+          console.error('Failed to parse stored participants:', e);
+        }
+      }
+      return false;
+    }
+
+    function clearParticipants() {
+      localStorage.removeItem(STORAGE_KEY);
+      participants = [];
+      updateParticipantCount();
+    }
+
+    function updateParticipantCount() {
+      const count = participants.length;
+      elM.value = count;
+      if (count === 0) {
+        statusText.textContent = '請先上傳包含「員工編號」和「姓名」的CSV檔案。';
+        btnStart.disabled = true;
+      } else {
+        statusText.textContent = `已載入 ${count} 位參與者，請設定抽出人數後開始抽獎。`;
+        btnStart.disabled = false;
+      }
+    }
+
+    // ===== CSV Upload =====
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      const result = [];
+
+      // Skip first line (header row)
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Split by comma, handle quoted fields
+        const parts = line.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+
+        if (parts.length >= 2) {
+          result.push({
+            id: parts[0],
+            name: parts[1]
+          });
+        }
+      }
+
+      return result;
+    }
+
+    csvUpload.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        // Read file as ArrayBuffer to detect encoding
+        const arrayBuffer = await file.arrayBuffer();
+        let text = null;
+
+        // Try different encodings
+        const encodings = ['UTF-8', 'Big5', 'GBK', 'UTF-16LE'];
+
+        for (const encoding of encodings) {
+          try {
+            const decoder = new TextDecoder(encoding, { fatal: true });
+            text = decoder.decode(arrayBuffer);
+
+            // Check if decoded text looks valid (no replacement characters)
+            if (!text.includes('\uFFFD') && text.trim().length > 0) {
+              console.log(`Successfully decoded with ${encoding}`);
+              break;
+            }
+          } catch (decodeError) {
+            // Try next encoding
+            continue;
+          }
+        }
+
+        // Fallback to UTF-8 if all else fails
+        if (!text || text.includes('\uFFFD')) {
+          const decoder = new TextDecoder('UTF-8', { fatal: false });
+          text = decoder.decode(arrayBuffer);
+        }
+
+        const data = parseCSV(text);
+
+        if (data.length === 0) {
+          alert('CSV檔案格式錯誤或無有效資料。請確認格式：員工編號,姓名');
+          return;
+        }
+
+        saveParticipants(data);
+        clearResultsUI();
+        alert(`成功載入 ${data.length} 位參與者！`);
+      } catch (err) {
+        alert('讀取CSV檔案失敗：' + err.message);
+      }
+
+      // Reset input so same file can be uploaded again
+      e.target.value = '';
+    });
+
+    btnClear.addEventListener('click', () => {
+      if (isRunning) return;
+
+      if (participants.length === 0) {
+        alert('目前沒有參與者資料。');
+        return;
+      }
+
+      if (confirm(`確定要清除所有參與者資料嗎？（共 ${participants.length} 位）`)) {
+        clearParticipants();
+        stopRolling();
+        clearSphere();
+        clearResultsUI();
+        alert('已清除所有參與者資料。');
+      }
+    });
 
     // ===== Animation / Machine =====
     let balls = [];
@@ -931,26 +1086,29 @@
 
     // ===== Visual FX =====
     function clearResultsUI() {
-      resultStrip.innerHTML = `<span class="hint">尚未開始，請按「開始抽獎」。</span>`;
-      bigNumber.textContent = "--";
+      const hint = participants.length === 0
+        ? '請先上傳CSV檔案。'
+        : '尚未開始，請按「開始抽獎」。';
+      resultStrip.innerHTML = `<span class="hint">${hint}</span>`;
+      bigNumber.innerHTML = "--";
       nowHint.textContent = "—";
     }
 
-    function addResultPill(n) {
+    function addResultPill(person) {
       const hint = resultStrip.querySelector(".hint");
       if (hint) hint.remove();
 
       const pill = document.createElement("div");
       pill.className = "num-pill";
-      pill.textContent = String(n).padStart(2, "0");
+      pill.innerHTML = `<div style="font-size:11px; opacity:0.8;">${person.id}</div><div style="font-size:15px; font-weight:1000;">${person.name}</div>`;
       resultStrip.appendChild(pill);
     }
 
-    function setBigNumber(n) {
+    function setBigNumber(person) {
       bigNumber.classList.remove("pulse");
       // reflow to restart animation
       void bigNumber.offsetWidth;
-      bigNumber.textContent = String(n).padStart(2, "0");
+      bigNumber.innerHTML = `<div style="font-size:12px; opacity:0.85;">${person.id}</div><div style="font-size:17px; font-weight:1000; margin-top:2px;">${person.name}</div>`;
       bigNumber.classList.add("pulse");
     }
 
@@ -977,7 +1135,7 @@
 
     // ===== Draw Logic =====
     function validateMN() {
-      let M = clampInt(elM.value, 1, 9999);
+      const M = participants.length;
       let N = clampInt(elN.value, 1, 9999);
       if (N > M) N = M;
 
@@ -986,22 +1144,30 @@
       return { M, N };
     }
 
-    function sampleWithoutReplacement(M, N) {
-      const pool = Array.from({ length: M }, (_, i) => i + 1);
+    function sampleParticipants(N) {
+      if (participants.length === 0) return [];
+      const pool = [...participants];
       shuffle(pool);
       return pool.slice(0, N);
     }
 
     async function runDraw() {
       if (isRunning) return;
+
+      if (participants.length === 0) {
+        alert('請先上傳CSV檔案！');
+        return;
+      }
+
       isRunning = true;
       btnStart.disabled = true;
       btnReset.disabled = true;
+      btnClear.disabled = true;
 
       const { M, N } = validateMN();
 
       clearResultsUI();
-      statusText.textContent = `滾動中：正在混球（M=${M}，將抽出 N=${N}）…`;
+      statusText.textContent = `滾動中：正在混球（共${M}位參與者，將抽出${N}位）…`;
       await SFX.resumeIfNeeded();
 
       // start rolling animation + whoosh
@@ -1012,12 +1178,12 @@
       await sleep(1600);
 
       // decide results
-      const results = sampleWithoutReplacement(M, N);
+      const results = sampleParticipants(N);
 
       // reveal one by one
-      statusText.textContent = "開獎中：逐顆揭曉…";
+      statusText.textContent = "開獎中：逐一揭曉中獎者…";
       for (let i = 0; i < results.length; i++) {
-        const n = results[i];
+        const person = results[i];
 
         // small pause between numbers
         await sleep(550);
@@ -1026,9 +1192,9 @@
         stopRolling();
         await sleep(60);
 
-        setBigNumber(n);
-        addResultPill(n);
-        nowHint.textContent = `第 ${i + 1} 顆 / 共 ${results.length} 顆`;
+        setBigNumber(person);
+        addResultPill(person);
+        nowHint.textContent = `第 ${i + 1} 位 / 共 ${results.length} 位`;
 
         // fx: spark burst near big number box position
         const rect = bigNumber.getBoundingClientRect();
@@ -1047,12 +1213,13 @@
 
       // finish
       stopRolling();
-      statusText.textContent = `完成：已抽出 ${N} 個號碼（可再次抽獎）。`;
-      nowHint.textContent = `完成（共 ${N} 顆）`;
+      statusText.textContent = `完成：已抽出 ${N} 位中獎者（可再次抽獎）。`;
+      nowHint.textContent = `完成（共 ${N} 位）`;
       SFX.win();
 
       btnStart.disabled = false;
       btnReset.disabled = false;
+      btnClear.disabled = false;
       isRunning = false;
     }
 
@@ -1061,18 +1228,32 @@
 
     btnReset.addEventListener("click", () => {
       if (isRunning) return;
-      validateMN();
+
+      // 停止滾動並清空球體
       stopRolling();
       clearSphere();
+
+      // 重置 N 回預設值 1
+      elN.value = 1;
+
+      // 清空結果顯示
       clearResultsUI();
-      statusText.textContent = "待命中：請設定 M、N 後開始。";
+
+      // 重新驗證參數
+      validateMN();
+
+      // 重新佈置裝飾性球體（空閒狀態）
+      layoutBalls(14);
+
+      // 更新狀態文字
+      updateParticipantCount();
     });
 
     // Keep inputs sane
-    elM.addEventListener("change", () => validateMN());
     elN.addEventListener("change", () => validateMN());
 
     // First paint
+    loadParticipants();
     validateMN();
     clearResultsUI();
     // Decorative idle balls
@@ -1084,7 +1265,9 @@
         d.dataset.vx = parseFloat(d.dataset.vx) * 0.35;
         d.dataset.vy = parseFloat(d.dataset.vy) * 0.35;
       }
-      statusText.textContent = "待命中：請設定 M、N 後開始。";
+      if (participants.length === 0) {
+        statusText.textContent = "請先上傳包含「員工編號」和「姓名」的CSV檔案。";
+      }
     }, 450);
 
     // Responsive: relayout on resize
