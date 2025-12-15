@@ -1120,13 +1120,14 @@
       // try restore previous if still available
       const opt = Array.from(prizeSelect.options).find(o => o.value === curr);
       if (opt) prizeSelect.value = curr; else prizeSelect.value = '';
-      // toggle N input disabled if prize selected
+      // 若選擇獎品，預設 N 為該獎品名額，但允許手動調整（不禁用）
       if (prizeSelect.value) {
         const sel = Array.from(prizeSelect.options).find(o => o.value === prizeSelect.value);
         if (sel) {
-          elN.value = sel.dataset.count || elN.value;
-          elN.disabled = true;
+          const max = clampInt(sel.dataset.count || '0', 1, 9999);
+          elN.value = clampInt(elN.value, 1, max);
         }
+        elN.disabled = false;
       } else {
         elN.disabled = false;
       }
@@ -1544,11 +1545,12 @@
     // ===== Draw Logic =====
     function validateMN() {
       const M = participants.length;
-      // If a prize is selected, force N to that count
       let N;
       if (prizeSelect && prizeSelect.value) {
         const opt = prizeSelect.options[prizeSelect.selectedIndex];
-        N = clampInt(opt?.dataset?.count || '0', 1, 9999);
+        const max = clampInt(opt?.dataset?.count || '0', 1, 9999);
+        // 允許使用者手動輸入，但不得超過獎品名額
+        N = clampInt(elN.value, 1, max);
       } else {
         N = clampInt(elN.value, 1, 9999);
       }
@@ -1599,17 +1601,23 @@
       btnReset.disabled = true;
       btnClear.disabled = true;
 
-      const { M, N } = validateMN();
+      let { M, N } = validateMN();
 
       // 若不可重複，需確認可抽取人數足夠
       const eligible = getEligibleParticipants();
-      if (eligible.length < N) {
-        alert(`可抽取人數不足：目前可抽 ${eligible.length} 人，獎品需要 ${N} 人。\n請調整獎品數量或啟用「可重複中獎」。`);
+      if (eligible.length === 0) {
+        alert('目前可抽人數為 0，請上傳參與者或啟用「可重複中獎」。');
         isRunning = false;
         btnStart.disabled = false;
         btnReset.disabled = false;
         btnClear.disabled = false;
         return;
+      }
+      if (eligible.length < N) {
+        const adjusted = eligible.length;
+        N = adjusted;
+        elN.value = adjusted;
+        statusText.textContent = `已自動將 N 調整為 ${adjusted}（依目前可抽人數）。`;
       }
 
       clearResultsUI();
