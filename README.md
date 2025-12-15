@@ -46,6 +46,10 @@ A003,張小美
 參獎,3
 ```
 
+**下載範例（Big5 編碼）**
+- [examples/employees.csv](examples/employees.csv)
+- [examples/prizes.csv](examples/prizes.csv)
+
 ## 技術說明
 
 - 單一檔案應用（HTML+CSS+JS）
