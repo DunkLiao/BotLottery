@@ -651,6 +651,15 @@
         </div>
 
         <div class="chip">
+          <label for="repeatPolicy">可重複中獎</label>
+          <select id="repeatPolicy"
+            style="width:160px; padding:8px 10px; border-radius:10px; border:1px solid rgba(0,0,0,.10); background:#fff;">
+            <option value="no" selected>不可重複</option>
+            <option value="yes">可重複</option>
+          </select>
+        </div>
+
+        <div class="chip">
           <label for="prizeSelect">獎品種類</label>
           <select id="prizeSelect"
             style="width:180px; padding:8px 10px; border-radius:10px; border:1px solid rgba(0,0,0,.10); background:#fff;">
@@ -733,7 +742,7 @@
               style="background:var(--split); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">抽獎設定</div>
               <ul style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
-                <li><b>CSV格式</b>：第一欄「員工編號」，第二欄「姓名」</li>
+                <li><b>CSV格式</b>：員工CSV（員工編號, 姓名）；獎品CSV（獎品種類, 獎品數量）</li>
                 <li><b>參與人數</b>：自動從上傳的CSV讀取</li>
                 <li><b>N</b>：要抽出的人數（不重複抽取）</li>
                 <li>限制：N 不能大於參與人數</li>
@@ -749,6 +758,91 @@
                 <li>逐一揭曉中獎者：顯示員工編號與姓名，搭配音效特效</li>
                 <li>可重複抽獎，或使用「清除資料」重新上傳</li>
               </ol>
+            </div>
+
+            <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
+              <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">上傳與抽獎流程圖</div>
+              <div style="width:100%; overflow:auto;">
+                <svg viewBox="0 0 1280 160" style="width:100%; height:auto; display:block;"
+                  preserveAspectRatio="xMidYMid meet" role="img" aria-label="上傳與抽獎流程圖">
+                  <defs>
+                    <style>
+                      .step {
+                        fill: #ffffff;
+                        stroke: #e6e6e6;
+                        stroke-width: 2;
+                        rx: 12;
+                        ry: 12;
+                      }
+
+                      .label {
+                        font: 14px sans-serif;
+                        fill: rgba(51, 51, 51, .88);
+                        dominant-baseline: middle;
+                        text-anchor: middle;
+                      }
+
+                      .small {
+                        font: 12px sans-serif;
+                        fill: rgba(51, 51, 51, .68);
+                      }
+
+                      .arrow {
+                        stroke: rgba(0, 0, 0, .28);
+                        stroke-width: 2.5;
+                        fill: none;
+                        marker-end: url(#arrowHead);
+                      }
+                    </style>
+                    <marker id="arrowHead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                      markerUnits="strokeWidth">
+                      <path d="M0,0 L10,4 L0,8 Z" fill="rgba(0,0,0,.28)"></path>
+                    </marker>
+                  </defs>
+
+                  <!-- layout constants -->
+                  <!-- 7 steps: x step = 0..6; spacing 180; rect w=170 h=56; center y=80 -->
+                  <g>
+                    <!-- Step 1 -->
+                    <rect class="step" x="20" y="52" width="170" height="56"></rect>
+                    <text class="label" x="105" y="80">上傳員工CSV</text>
+
+                    <!-- Step 2 -->
+                    <rect class="step" x="200" y="52" width="170" height="56"></rect>
+                    <text class="label" x="285" y="80">上傳獎品CSV</text>
+
+                    <!-- Step 3 -->
+                    <rect class="step" x="380" y="52" width="170" height="56"></rect>
+                    <text class="label" x="465" y="80">選擇獎品</text>
+
+                    <!-- Step 4 -->
+                    <rect class="step" x="560" y="52" width="170" height="56"></rect>
+                    <text class="label" x="645" y="76">設定可重複/不可重複</text>
+                    <text class="small" x="645" y="96">預設：不可重複</text>
+
+                    <!-- Step 5 -->
+                    <rect class="step" x="740" y="52" width="170" height="56"></rect>
+                    <text class="label" x="825" y="80">開始抽獎</text>
+
+                    <!-- Step 6 -->
+                    <rect class="step" x="920" y="52" width="170" height="56"></rect>
+                    <text class="label" x="1005" y="76">揭曉中獎</text>
+                    <text class="small" x="1005" y="96">顯示員編＋姓名</text>
+
+                    <!-- Step 7 -->
+                    <rect class="step" x="1100" y="52" width="170" height="56"></rect>
+                    <text class="label" x="1185" y="80">匯出中獎CSV</text>
+
+                    <!-- Arrows -->
+                    <line class="arrow" x1="190" y1="80" x2="200" y2="80"></line>
+                    <line class="arrow" x1="370" y1="80" x2="380" y2="80"></line>
+                    <line class="arrow" x1="550" y1="80" x2="560" y2="80"></line>
+                    <line class="arrow" x1="730" y1="80" x2="740" y2="80"></line>
+                    <line class="arrow" x1="910" y1="80" x2="920" y2="80"></line>
+                    <line class="arrow" x1="1090" y1="80" x2="1100" y2="80"></line>
+                  </g>
+                </svg>
+              </div>
             </div>
 
             <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
@@ -901,6 +995,7 @@
     const csvUpload = $("#csvUpload");
     const prizeUpload = $("#prizeUpload");
     const prizeSelect = $("#prizeSelect");
+    const repeatPolicy = $("#repeatPolicy");
     const statusText = $("#statusText");
     const resultStrip = $("#resultStrip");
     const sphere = $("#sphere");
@@ -917,6 +1012,7 @@
     let participants = [];
     let prizes = [];
     let winners = [];
+    let allowRepeat = false; // 預設不可重複
 
     function saveParticipants(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -1201,12 +1297,16 @@
           return;
         }
         // CSV header
-        const header = ['獎品種類', '員工編號', '姓名', '時間'];
+        const header = ['日期', '獎品種類', '員工編號', '姓名'];
         const lines = [header];
         const toCSV = (v) => '"' + String(v).replace(/"/g, '""') + '"';
         for (const w of winners) {
-          const iso = w.ts ? new Date(w.ts).toISOString() : '';
-          lines.push([w.prize, w.id, w.name, iso]);
+          const d = w.ts ? new Date(w.ts) : new Date();
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          const ymd = `${y}${m}${day}`; // YYYYMMDD
+          lines.push([ymd, w.prize, w.id, w.name]);
         }
         const csv = lines.map(row => row.map(toCSV).join(',')).join('\n');
         const bom = '\uFEFF';
@@ -1232,6 +1332,9 @@
         const cnt = parseInt(opt?.dataset?.count || '0', 10) || 0;
         elN.value = Math.max(1, cnt);
         elN.disabled = true;
+        // 選擇獎品時，重置為不可重複中獎
+        allowRepeat = false;
+        if (repeatPolicy) repeatPolicy.value = 'no';
       } else {
         elN.disabled = false;
       }
@@ -1436,9 +1539,16 @@
       return { M, N };
     }
 
+    function getEligibleParticipants() {
+      if (!participants || participants.length === 0) return [];
+      if (allowRepeat) return [...participants];
+      const wonIds = new Set(winners.map(w => String(w.id)));
+      return participants.filter(p => !wonIds.has(String(p.id)));
+    }
+
     function sampleParticipants(N) {
-      if (participants.length === 0) return [];
-      const pool = [...participants];
+      const pool = getEligibleParticipants();
+      if (pool.length === 0) return [];
       shuffle(pool);
       return pool.slice(0, N);
     }
@@ -1470,6 +1580,17 @@
       btnClear.disabled = true;
 
       const { M, N } = validateMN();
+
+      // 若不可重複，需確認可抽取人數足夠
+      const eligible = getEligibleParticipants();
+      if (eligible.length < N) {
+        alert(`可抽取人數不足：目前可抽 ${eligible.length} 人，獎品需要 ${N} 人。\n請調整獎品數量或啟用「可重複中獎」。`);
+        isRunning = false;
+        btnStart.disabled = false;
+        btnReset.disabled = false;
+        btnClear.disabled = false;
+        return;
+      }
 
       clearResultsUI();
       statusText.textContent = `滾動中：正在混球（共${M}位參與者，將抽出「${prizeName}」共 ${N} 位）…`;
@@ -1574,6 +1695,13 @@
 
     // Keep inputs sane
     elN.addEventListener("change", () => validateMN());
+
+    // Repeat policy change
+    if (repeatPolicy) {
+      repeatPolicy.addEventListener('change', () => {
+        allowRepeat = (repeatPolicy.value === 'yes');
+      });
+    }
 
     // First paint
     loadParticipants();
