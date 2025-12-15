@@ -677,7 +677,7 @@
           <input type="file" id="csvUpload" accept=".csv" style="display:none;" />
         </label>
         <button class="btn btn-secondary" id="btnClear" type="button">清除資料</button>
-        <button class="btn btn-secondary" id="btnReset" type="button">重置</button>
+        <button class="btn btn-secondary" id="btnReset" type="button">重置（N 至 1）</button>
         <button class="btn btn-primary" id="btnStart" type="button">開始抽獎</button>
       </div>
     </div>
@@ -758,6 +758,15 @@
                 <li>逐一揭曉中獎者：顯示員工編號與姓名，搭配音效特效</li>
                 <li>可重複抽獎，或使用「清除資料」重新上傳</li>
               </ol>
+            </div>
+
+            <div
+              style="background:var(--split); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
+              <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">操作說明：重置 vs 清除資料</div>
+              <ul style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
+                <li><b>重置（N 至 1）</b>：停止動畫、清空球體與結果顯示，並將抽出人數 N 重設為 1；<b>不影響</b> 參與者、獎品與中獎紀錄。</li>
+                <li><b>清除資料</b>：移除瀏覽器本地的參與者、獎品與中獎紀錄（LocalStorage 清空）；參與者數 M 變為 0、抽出人數 N 同步歸 0；需重新上傳 CSV 後方可抽獎。</li>
+              </ul>
             </div>
 
             <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
@@ -1247,7 +1256,7 @@
         return;
       }
 
-      if (confirm(`確定要清除所有資料嗎？\n\n參與者：${pCount} 位\n獎品種類：${prizeCount} 種\n中獎紀錄：${winnerCount} 筆`)) {
+      if (confirm(`確定要清除所有資料嗎？\n\n參與者：${pCount} 位\n獎品種類：${prizeCount} 種\n中獎紀錄：${winnerCount} 筆\n\n注意：清除後抽出人數 N 將歸 0，需重新上傳 CSV 才能抽獎。`)) {
         // 清參與者
         clearParticipants();
         // 清獎品與中獎紀錄
@@ -1263,6 +1272,8 @@
         clearSphere();
         clearResultsUI();
         updateParticipantCount();
+        // 重新驗證並同步 N 值（M=0 時，N 會歸零）
+        validateMN();
         alert('已清除所有資料。');
       }
     });
