@@ -762,84 +762,94 @@
 
             <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">上傳與抽獎流程圖</div>
-              <div style="width:100%; overflow:auto;">
-                <svg viewBox="0 0 1280 160" style="width:100%; height:auto; display:block;"
+              <div style="width:100%; display:flex; justify-content:center; padding:16px 0;">
+                <svg viewBox="0 0 320 850" style="width:280px; max-width:100%; height:auto; display:block;"
                   preserveAspectRatio="xMidYMid meet" role="img" aria-label="上傳與抽獎流程圖">
                   <defs>
                     <style>
                       .step {
                         fill: #ffffff;
-                        stroke: #e6e6e6;
-                        stroke-width: 2;
-                        rx: 12;
-                        ry: 12;
+                        stroke: #d6a33a;
+                        stroke-width: 2.5;
+                        rx: 16;
+                        ry: 16;
                       }
 
                       .label {
-                        font: 14px sans-serif;
-                        fill: rgba(51, 51, 51, .88);
+                        font: 16px sans-serif;
+                        font-weight: 600;
+                        fill: rgba(51, 51, 51, .92);
                         dominant-baseline: middle;
                         text-anchor: middle;
                       }
 
                       .small {
-                        font: 12px sans-serif;
-                        fill: rgba(51, 51, 51, .68);
+                        font: 13px sans-serif;
+                        fill: rgba(51, 51, 51, .72);
                       }
 
                       .arrow {
-                        stroke: rgba(0, 0, 0, .28);
-                        stroke-width: 2.5;
+                        stroke: rgba(214, 163, 58, .48);
+                        stroke-width: 3;
                         fill: none;
-                        marker-end: url(#arrowHead);
+                        marker-end: url(#arrowHeadDown);
                       }
                     </style>
-                    <marker id="arrowHead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"
+                    <marker id="arrowHeadDown" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto"
                       markerUnits="strokeWidth">
-                      <path d="M0,0 L10,4 L0,8 Z" fill="rgba(0,0,0,.28)"></path>
+                      <path d="M2,2 L6,10 L10,2 Z" fill="rgba(214, 163, 58, .48)"></path>
                     </marker>
                   </defs>
 
-                  <!-- layout constants -->
-                  <!-- 7 steps: x step = 0..6; spacing 180; rect w=170 h=56; center y=80 -->
+                  <!-- Vertical flow: 7 steps -->
                   <g>
-                    <!-- Step 1 -->
-                    <rect class="step" x="20" y="52" width="170" height="56"></rect>
-                    <text class="label" x="105" y="80">上傳員工CSV</text>
+                    <!-- Step 1: 上傳員工CSV -->
+                    <rect class="step" x="35" y="10" width="250" height="70"></rect>
+                    <text class="label" x="160" y="45">上傳員工CSV</text>
 
-                    <!-- Step 2 -->
-                    <rect class="step" x="200" y="52" width="170" height="56"></rect>
-                    <text class="label" x="285" y="80">上傳獎品CSV</text>
+                    <!-- Arrow -->
+                    <line class="arrow" x1="160" y1="80" x2="160" y2="105"></line>
 
-                    <!-- Step 3 -->
-                    <rect class="step" x="380" y="52" width="170" height="56"></rect>
-                    <text class="label" x="465" y="80">選擇獎品</text>
+                    <!-- Step 2: 上傳獎品CSV -->
+                    <rect class="step" x="35" y="105" width="250" height="70"></rect>
+                    <text class="label" x="160" y="140">上傳獎品CSV</text>
 
-                    <!-- Step 4 -->
-                    <rect class="step" x="560" y="52" width="170" height="56"></rect>
-                    <text class="label" x="645" y="76">設定可重複/不可重複</text>
-                    <text class="small" x="645" y="96">預設：不可重複</text>
+                    <!-- Arrow -->
+                    <line class="arrow" x1="160" y1="175" x2="160" y2="200"></line>
 
-                    <!-- Step 5 -->
-                    <rect class="step" x="740" y="52" width="170" height="56"></rect>
-                    <text class="label" x="825" y="80">開始抽獎</text>
+                    <!-- Step 3: 選擇獎品 -->
+                    <rect class="step" x="35" y="200" width="250" height="70"></rect>
+                    <text class="label" x="160" y="235">選擇獎品</text>
 
-                    <!-- Step 6 -->
-                    <rect class="step" x="920" y="52" width="170" height="56"></rect>
-                    <text class="label" x="1005" y="76">揭曉中獎</text>
-                    <text class="small" x="1005" y="96">顯示員編＋姓名</text>
+                    <!-- Arrow -->
+                    <line class="arrow" x1="160" y1="270" x2="160" y2="295"></line>
 
-                    <!-- Step 7 -->
-                    <rect class="step" x="1100" y="52" width="170" height="56"></rect>
-                    <text class="label" x="1185" y="80">匯出中獎CSV</text>
+                    <!-- Step 4: 設定可重複/不可重複 -->
+                    <rect class="step" x="35" y="295" width="250" height="90"></rect>
+                    <text class="label" x="160" y="330">設定可重複/不可重複</text>
+                    <text class="small" x="160" y="360">預設：不可重複</text>
 
-                    <!-- Arrows -->
-                    <line class="arrow" x1="190" y1="80" x2="200" y2="80"></line>
-                    <line class="arrow" x1="370" y1="80" x2="380" y2="80"></line>
-                    <line class="arrow" x1="550" y1="80" x2="560" y2="80"></line>
-                    <line class="arrow" x1="730" y1="80" x2="740" y2="80"></line>
-                    <line class="arrow" x1="910" y1="80" x2="920" y2="80"></line>
-                    <line class="arrow" x1="1090" y1="80" x2="1100" y2="80"></line>
+                    <!-- Arrow -->
+                    <line class="arrow" x1="160" y1="385" x2="160" y2="410"></line>
+
+                    <!-- Step 5: 開始抽獎 -->
+                    <rect class="step" x="35" y="410" width="250" height="70"></rect>
+                    <text class="label" x="160" y="445">開始抽獎</text>
+
+                    <!-- Arrow -->
+                    <line class="arrow" x1="160" y1="480" x2="160" y2="505"></line>
+
+                    <!-- Step 6: 揭曉中獎 -->
+                    <rect class="step" x="35" y="505" width="250" height="90"></rect>
+                    <text class="label" x="160" y="540">揭曉中獎</text>
+                    <text class="small" x="160" y="570">顯示員編＋姓名＋音效</text>
+
+                    <!-- Arrow -->
+                    <line class="arrow" x1="160" y1="595" x2="160" y2="620"></line>
+
+                    <!-- Step 7: 匯出中獎CSV -->
+                    <rect class="step" x="35" y="620" width="250" height="70"></rect>
+                    <text class="label" x="160" y="655">匯出中獎CSV</text>
                   </g>
                 </svg>
               </div>
@@ -1325,18 +1335,17 @@
       });
     }
 
-    // Prize select -> lock N
+    // Prize select -> set suggested N (but allow user to adjust)
     prizeSelect.addEventListener('change', () => {
       if (prizeSelect.value) {
         const opt = prizeSelect.options[prizeSelect.selectedIndex];
         const cnt = parseInt(opt?.dataset?.count || '0', 10) || 0;
         elN.value = Math.max(1, cnt);
-        elN.disabled = true;
+        // 不禁用 N，允許用戶手動調整
+        elN.disabled = false;
         // 選擇獎品時，重置為不可重複中獎
         allowRepeat = false;
         if (repeatPolicy) repeatPolicy.value = 'no';
-      } else {
-        elN.disabled = false;
       }
       validateMN();
     });
