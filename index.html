@@ -229,6 +229,43 @@
       .hero {
         grid-template-columns: 1fr;
       }
+
+      .topbar-inner {
+        padding: 12px 12px;
+        gap: 10px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions {
+        justify-content: stretch;
+        gap: 8px;
+      }
+
+      .actions .chip,
+      .actions .btn {
+        width: 100%;
+      }
+
+      #prizeSelect,
+      #N,
+      #M {
+        width: 100% !important;
+      }
+
+      .result-strip {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .num-pill {
+        min-width: calc(50% - 10px);
+      }
+
+      .big-number {
+        min-width: unset;
+        width: 100%;
+      }
     }
 
     .panel {
@@ -613,8 +650,21 @@
           <input id="N" type="number" min="1" max="9999" value="1" />
         </div>
 
+        <div class="chip">
+          <label for="prizeSelect">獎品種類</label>
+          <select id="prizeSelect"
+            style="width:180px; padding:8px 10px; border-radius:10px; border:1px solid rgba(0,0,0,.10); background:#fff;">
+            <option value="">— 請選擇獎品 —</option>
+          </select>
+        </div>
+
+        <label class="btn btn-secondary" for="prizeUpload" style="margin:0; cursor:pointer;">
+          🎁 上傳獎品CSV
+          <input type="file" id="prizeUpload" accept=".csv" style="display:none;" />
+        </label>
+
         <label class="btn btn-secondary" for="csvUpload" style="margin:0; cursor:pointer;">
-          📁 上傳CSV
+          📁 上傳員工CSV
           <input type="file" id="csvUpload" accept=".csv" style="display:none;" />
         </label>
         <button class="btn btn-secondary" id="btnClear" type="button">清除資料</button>
@@ -675,7 +725,7 @@
       <div class="panel">
         <div class="panel-header">
           <h2>規則與顯示</h2>
-          <p>本頁示範：從 1..M 的號碼球中，不重複抽出 N 個。每顆號碼都有揭曉特效與提示音。</p>
+          <p>本頁示範：從已上傳的員工名單中，不重複抽出指定人數（或依獎品設定）。每位中獎者都有揭曉特效與提示音。</p>
         </div>
         <div class="panel-body">
           <div style="display:grid; gap:12px;">
@@ -693,12 +743,21 @@
             <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
               <div style="font-weight:900; color:var(--magenta); margin-bottom:6px;">流程</div>
               <ol style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
-                <li>上傳CSV檔案（資料會儲存在瀏覽器本地）</li>
+                <li>上傳員工CSV與獎品CSV（資料儲存在瀏覽器本地）</li>
                 <li>設定要抽出的人數 N</li>
                 <li>點擊「開始抽獎」進入滾動動畫</li>
                 <li>逐一揭曉中獎者：顯示員工編號與姓名，搭配音效特效</li>
                 <li>可重複抽獎，或使用「清除資料」重新上傳</li>
               </ol>
+            </div>
+
+            <div style="background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:12px 14px;">
+              <div style="font-weight:900; color:var(--brand); margin-bottom:6px;">CSV 上傳說明</div>
+              <ul style="margin:0; padding-left:18px; color:rgba(51,51,51,.78); line-height:1.8;">
+                <li><b>員工CSV</b>（第一列為表頭）：欄位順序為「員工編號, 姓名」</li>
+                <li><b>獎品CSV</b>（第一列為表頭）：欄位順序為「獎品種類, 獎品數量」</li>
+                <li>支援編碼自動偵測：UTF-8、Big5、GBK、UTF-16LE</li>
+              </ul>
             </div>
 
             <div
@@ -712,6 +771,21 @@
         </div>
       </div>
     </div> <!-- hero end -->
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>中獎名單</h2>
+        <p>顯示各獎品種類之中獎員工（依抽獎順序顯示）。</p>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:10px; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="btnExportWinners" type="button">匯出中獎CSV</button>
+        </div>
+        <div id="winnersList">
+          <span class="hint">尚無中獎紀錄。</span>
+        </div>
+      </div>
+    </div>
   </div> <!-- wrap end -->
 
   <footer>版權所有： © Dunk</footer>
@@ -825,16 +899,24 @@
     const btnReset = $("#btnReset");
     const btnClear = $("#btnClear");
     const csvUpload = $("#csvUpload");
+    const prizeUpload = $("#prizeUpload");
+    const prizeSelect = $("#prizeSelect");
     const statusText = $("#statusText");
     const resultStrip = $("#resultStrip");
     const sphere = $("#sphere");
     const stage = $("#stage");
     const bigNumber = $("#bigNumber");
     const nowHint = $("#nowHint");
+    const winnersList = $("#winnersList");
+    const btnExportWinners = $("#btnExportWinners");
 
     // ===== LocalStorage Management =====
     const STORAGE_KEY = 'lottery_participants';
+    const PRIZES_KEY = 'lottery_prizes';
+    const WINNERS_KEY = 'lottery_winners';
     let participants = [];
+    let prizes = [];
+    let winners = [];
 
     function saveParticipants(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -874,6 +956,86 @@
       }
     }
 
+    // ===== Prizes Storage =====
+    function savePrizes(list) {
+      localStorage.setItem(PRIZES_KEY, JSON.stringify(list));
+      prizes = list;
+      populatePrizeSelect();
+    }
+
+    function loadPrizes() {
+      const raw = localStorage.getItem(PRIZES_KEY);
+      if (!raw) return false;
+      try {
+        prizes = JSON.parse(raw) || [];
+        populatePrizeSelect();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function saveWinners() {
+      localStorage.setItem(WINNERS_KEY, JSON.stringify(winners));
+    }
+
+    function loadWinners() {
+      const raw = localStorage.getItem(WINNERS_KEY);
+      if (!raw) return false;
+      try {
+        winners = JSON.parse(raw) || [];
+        renderWinnersList();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function populatePrizeSelect() {
+      if (!prizeSelect) return;
+      const curr = prizeSelect.value;
+      prizeSelect.innerHTML = '<option value="">— 請選擇獎品 —</option>';
+      prizes.filter(p => !p.drawn && p.count > 0).forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.name;
+        opt.textContent = `${p.name}（${p.count}名）`;
+        opt.dataset.count = String(p.count);
+        prizeSelect.appendChild(opt);
+      });
+      // try restore previous if still available
+      const opt = Array.from(prizeSelect.options).find(o => o.value === curr);
+      if (opt) prizeSelect.value = curr; else prizeSelect.value = '';
+      // toggle N input disabled if prize selected
+      if (prizeSelect.value) {
+        const sel = Array.from(prizeSelect.options).find(o => o.value === prizeSelect.value);
+        if (sel) {
+          elN.value = sel.dataset.count || elN.value;
+          elN.disabled = true;
+        }
+      } else {
+        elN.disabled = false;
+      }
+    }
+
+    function renderWinnersList() {
+      if (!winnersList) return;
+      if (!winners || winners.length === 0) {
+        winnersList.innerHTML = '<span class="hint">尚無中獎紀錄。</span>';
+        if (btnExportWinners) btnExportWinners.disabled = true;
+        return;
+      }
+      if (btnExportWinners) btnExportWinners.disabled = false;
+      const header = `
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr; gap:10px; padding:6px 0; font-weight:900; color:var(--brand); border-bottom:1px solid rgba(0,0,0,.06);">
+          <div>獎品種類</div><div>員工編號</div><div>姓名</div>
+        </div>`;
+      const rows = winners.map(w => `
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr; gap:10px; padding:8px 0; border-bottom:1px dashed rgba(0,0,0,.06);">
+          <div>${w.prize}</div><div>${w.id}</div><div>${w.name}</div>
+        </div>`).join('');
+      winnersList.innerHTML = header + rows;
+    }
+
     // ===== CSV Upload =====
     function parseCSV(text) {
       const lines = text.trim().split('\n');
@@ -895,6 +1057,23 @@
         }
       }
 
+      return result;
+    }
+
+    function parsePrizeCSV(text) {
+      const lines = text.trim().split('\n');
+      const result = [];
+      // Skip header
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const parts = line.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+        if (parts.length >= 2) {
+          const name = parts[0];
+          const count = Math.max(0, parseInt(parts[1], 10) || 0);
+          if (name && count > 0) result.push({ name, count, drawn: false });
+        }
+      }
       return result;
     }
 
@@ -953,18 +1132,110 @@
     btnClear.addEventListener('click', () => {
       if (isRunning) return;
 
-      if (participants.length === 0) {
-        alert('目前沒有參與者資料。');
+      const pCount = participants.length;
+      const prizeCount = prizes.length;
+      const winnerCount = winners.length;
+
+      if (!pCount && !prizeCount && !winnerCount) {
+        alert('目前沒有可清除的資料。');
         return;
       }
 
-      if (confirm(`確定要清除所有參與者資料嗎？（共 ${participants.length} 位）`)) {
+      if (confirm(`確定要清除所有資料嗎？\n\n參與者：${pCount} 位\n獎品種類：${prizeCount} 種\n中獎紀錄：${winnerCount} 筆`)) {
+        // 清參與者
         clearParticipants();
+        // 清獎品與中獎紀錄
+        localStorage.removeItem(PRIZES_KEY);
+        localStorage.removeItem(WINNERS_KEY);
+        prizes = [];
+        winners = [];
+        populatePrizeSelect();
+        renderWinnersList();
+
+        // UI 重置
         stopRolling();
         clearSphere();
         clearResultsUI();
-        alert('已清除所有參與者資料。');
+        updateParticipantCount();
+        alert('已清除所有資料。');
       }
+    });
+
+    // ===== Prize CSV Upload (with encoding detection) =====
+    prizeUpload.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        let text = null;
+        const encodings = ['UTF-8', 'Big5', 'GBK', 'UTF-16LE'];
+        for (const encoding of encodings) {
+          try {
+            const decoder = new TextDecoder(encoding, { fatal: true });
+            text = decoder.decode(arrayBuffer);
+            if (!text.includes('\uFFFD') && text.trim().length > 0) break;
+          } catch { continue; }
+        }
+        if (!text || text.includes('\uFFFD')) {
+          const decoder = new TextDecoder('UTF-8', { fatal: false });
+          text = decoder.decode(arrayBuffer);
+        }
+        const data = parsePrizeCSV(text);
+        if (data.length === 0) {
+          alert('獎品CSV格式錯誤或無有效資料。請確認格式：獎品種類,獎品數量');
+          return;
+        }
+        savePrizes(data);
+        alert(`已載入 ${data.length} 種獎品！`);
+      } catch (err) {
+        alert('讀取獎品CSV檔案失敗：' + err.message);
+      }
+      e.target.value = '';
+    });
+
+    // ===== Export Winners CSV =====
+    if (btnExportWinners) {
+      btnExportWinners.addEventListener('click', () => {
+        if (!winners || winners.length === 0) {
+          alert('目前沒有中獎紀錄可匯出。');
+          return;
+        }
+        // CSV header
+        const header = ['獎品種類', '員工編號', '姓名', '時間'];
+        const lines = [header];
+        const toCSV = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+        for (const w of winners) {
+          const iso = w.ts ? new Date(w.ts).toISOString() : '';
+          lines.push([w.prize, w.id, w.name, iso]);
+        }
+        const csv = lines.map(row => row.map(toCSV).join(',')).join('\n');
+        const bom = '\uFEFF';
+        const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const ts = new Date().toISOString().replace(/[:T]/g, '-').split('.')[0];
+        a.href = url;
+        a.download = `winners-${ts}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 0);
+      });
+    }
+
+    // Prize select -> lock N
+    prizeSelect.addEventListener('change', () => {
+      if (prizeSelect.value) {
+        const opt = prizeSelect.options[prizeSelect.selectedIndex];
+        const cnt = parseInt(opt?.dataset?.count || '0', 10) || 0;
+        elN.value = Math.max(1, cnt);
+        elN.disabled = true;
+      } else {
+        elN.disabled = false;
+      }
+      validateMN();
     });
 
     // ===== Animation / Machine =====
@@ -1150,7 +1421,14 @@
     // ===== Draw Logic =====
     function validateMN() {
       const M = participants.length;
-      let N = clampInt(elN.value, 1, 9999);
+      // If a prize is selected, force N to that count
+      let N;
+      if (prizeSelect && prizeSelect.value) {
+        const opt = prizeSelect.options[prizeSelect.selectedIndex];
+        N = clampInt(opt?.dataset?.count || '0', 1, 9999);
+      } else {
+        N = clampInt(elN.value, 1, 9999);
+      }
       if (N > M) N = M;
 
       elM.value = M;
@@ -1173,6 +1451,19 @@
         return;
       }
 
+      // Require prize selection
+      if (!prizeSelect.value) {
+        alert('請先選擇要抽出的獎品種類！');
+        return;
+      }
+      const prizeName = prizeSelect.value;
+      const prizeObj = prizes.find(p => p.name === prizeName && !p.drawn);
+      if (!prizeObj) {
+        alert('無法抽取該獎品（可能已抽出或不存在）。');
+        populatePrizeSelect();
+        return;
+      }
+
       isRunning = true;
       btnStart.disabled = true;
       btnReset.disabled = true;
@@ -1181,7 +1472,7 @@
       const { M, N } = validateMN();
 
       clearResultsUI();
-      statusText.textContent = `滾動中：正在混球（共${M}位參與者，將抽出${N}位）…`;
+      statusText.textContent = `滾動中：正在混球（共${M}位參與者，將抽出「${prizeName}」共 ${N} 位）…`;
       await SFX.resumeIfNeeded();
 
       // start rolling animation + whoosh
@@ -1227,9 +1518,23 @@
 
       // finish
       stopRolling();
-      statusText.textContent = `完成：已抽出 ${N} 位中獎者（可再次抽獎）。`;
+      statusText.textContent = `完成：「${prizeName}」已抽出 ${N} 位中獎者。`;
       nowHint.textContent = `完成（共 ${N} 位）`;
       SFX.win();
+
+      // Save winners and mark prize as drawn
+      const newEntries = results.map(p => ({ prize: prizeName, id: p.id, name: p.name, ts: Date.now() }));
+      winners = winners.concat(newEntries);
+      saveWinners();
+      renderWinnersList();
+
+      // Mark prize as drawn and update select
+      const idx = prizes.findIndex(p => p.name === prizeName);
+      if (idx >= 0) {
+        prizes[idx].drawn = true;
+        savePrizes(prizes);
+      }
+      populatePrizeSelect();
 
       btnStart.disabled = false;
       btnReset.disabled = false;
@@ -1260,6 +1565,10 @@
       layoutBalls(14);
 
       // 更新狀態文字
+      if (prizeSelect) {
+        prizeSelect.value = '';
+        elN.disabled = false;
+      }
       updateParticipantCount();
     });
 
@@ -1268,6 +1577,8 @@
 
     // First paint
     loadParticipants();
+    loadPrizes();
+    loadWinners();
     validateMN();
     clearResultsUI();
     // Decorative idle balls
