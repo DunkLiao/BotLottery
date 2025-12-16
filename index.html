@@ -266,6 +266,27 @@
         min-width: unset;
         width: 100%;
       }
+
+      .manual-winner-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
+        background: rgba(245, 245, 245, 0.5);
+        border-radius: 10px;
+        margin-bottom: 8px;
+        border-bottom: none;
+      }
+
+      .manual-winner-item:hover {
+        background: rgba(154, 0, 54, .05);
+      }
+
+      .manual-winner-actions {
+        justify-content: flex-end !important;
+        border-top: 1px solid rgba(0, 0, 0, .06);
+        padding-top: 8px;
+        margin-top: 4px;
+      }
     }
 
     .panel {
@@ -602,6 +623,45 @@
       }
     }
 
+    /* Manual Winners List */
+    .manual-winner-item {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr .8fr auto;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px dashed rgba(0, 0, 0, .06);
+      align-items: center;
+    }
+
+    .manual-winner-item:hover {
+      background: rgba(154, 0, 54, .03);
+    }
+
+    .manual-winner-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-icon {
+      appearance: none;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      transition: background .15s ease;
+      user-select: none;
+    }
+
+    .btn-icon:hover {
+      background: rgba(0, 0, 0, .08);
+    }
+
+    .btn-icon:active {
+      transform: scale(.95);
+    }
+
     /* Footer */
     footer {
       position: fixed;
@@ -890,7 +950,7 @@
     <div class="panel">
       <div class="panel-header">
         <h2>中獎名單</h2>
-        <p>顯示各獎品種類之中獎員工（依抽獎順序顯示）。</p>
+        <p>顯示各獎品種類之中獎員工（依抽獎順序顯示，包含線上抽獎與手動設定）。</p>
       </div>
       <div class="panel-body">
         <div style="display:flex; justify-content:flex-end; margin-bottom:10px; gap:10px; flex-wrap:wrap;">
@@ -898,6 +958,58 @@
         </div>
         <div id="winnersList">
           <span class="hint">尚無中獎紀錄。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>手動設定中獎名單</h2>
+        <p>可手動新增中獎者，設定生效後會自動扣減對應獎品的可抽獎數量。</p>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:16px; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnAddManualWinner" type="button">➕ 新增中獎者</button>
+        </div>
+
+        <!-- 新增/編輯表單 -->
+        <div id="manualWinnerForm"
+          style="display:none; background:var(--split); border:1px solid rgba(0,0,0,.10); border-radius:16px; padding:16px; margin-bottom:16px;">
+          <h3 style="margin:0 0 12px; font-size:15px; color:var(--brand);">手動新增/編輯中獎者</h3>
+          <div style="display:grid; gap:12px;">
+            <div>
+              <label for="manualPrizeSelect"
+                style="display:block; margin-bottom:6px; font-size:13px; font-weight:700;">獎品種類</label>
+              <select id="manualPrizeSelect"
+                style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.10); background:#fff; font-size:14px;">
+                <option value="">— 請選擇獎品 —</option>
+              </select>
+            </div>
+            <div>
+              <label for="manualEmployeeSelect"
+                style="display:block; margin-bottom:6px; font-size:13px; font-weight:700;">員工編號</label>
+              <select id="manualEmployeeSelect"
+                style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.10); background:#fff; font-size:14px;">
+                <option value="">— 請選擇員工 —</option>
+              </select>
+            </div>
+            <div>
+              <label for="manualEmployeeName"
+                style="display:block; margin-bottom:6px; font-size:13px; font-weight:700;">姓名</label>
+              <input id="manualEmployeeName" type="text" readonly
+                style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.10); background:#f9f9f9; cursor:default; font-size:14px;"
+                placeholder="選擇員工編號後自動顯示" />
+            </div>
+            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+              <button class="btn btn-secondary" id="btnCancelManual" type="button">取消</button>
+              <button class="btn btn-primary" id="btnSaveManual" type="button">儲存</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 手動中獎名單 -->
+        <div id="manualWinnersList">
+          <span class="hint">尚無手動設定的中獎紀錄。</span>
         </div>
       </div>
     </div>
@@ -1025,15 +1137,26 @@
     const nowHint = $("#nowHint");
     const winnersList = $("#winnersList");
     const btnExportWinners = $("#btnExportWinners");
+    const btnAddManualWinner = $("#btnAddManualWinner");
+    const manualWinnerForm = $("#manualWinnerForm");
+    const manualPrizeSelect = $("#manualPrizeSelect");
+    const manualEmployeeSelect = $("#manualEmployeeSelect");
+    const manualEmployeeName = $("#manualEmployeeName");
+    const btnSaveManual = $("#btnSaveManual");
+    const btnCancelManual = $("#btnCancelManual");
+    const manualWinnersList = $("#manualWinnersList");
 
     // ===== LocalStorage Management =====
     const STORAGE_KEY = 'lottery_participants';
     const PRIZES_KEY = 'lottery_prizes';
     const WINNERS_KEY = 'lottery_winners';
+    const MANUAL_WINNERS_KEY = 'lottery_manual_winners';
     let participants = [];
     let prizes = [];
     let winners = [];
+    let manualWinners = [];
     let allowRepeat = false; // 預設不可重複
+    let editingManualWinnerId = null; // 正在編輯的手動中獎者ID
 
     function saveParticipants(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -1108,16 +1231,46 @@
       }
     }
 
+    function saveManualWinners() {
+      localStorage.setItem(MANUAL_WINNERS_KEY, JSON.stringify(manualWinners));
+    }
+
+    function loadManualWinners() {
+      const raw = localStorage.getItem(MANUAL_WINNERS_KEY);
+      if (!raw) return false;
+      try {
+        manualWinners = JSON.parse(raw) || [];
+        renderManualWinnersList();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function clearManualWinners() {
+      localStorage.removeItem(MANUAL_WINNERS_KEY);
+      manualWinners = [];
+      renderManualWinnersList();
+    }
+
     function populatePrizeSelect() {
       if (!prizeSelect) return;
       const curr = prizeSelect.value;
       prizeSelect.innerHTML = '<option value="">— 請選擇獎品 —</option>';
       prizes.filter(p => !p.drawn && p.count > 0).forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.name;
-        opt.textContent = `${p.name}（${p.count}名）`;
-        opt.dataset.count = String(p.count);
-        prizeSelect.appendChild(opt);
+        // 計算線上抽獎和手動設定已使用的數量
+        const drawnCount = winners.filter(w => w.prize === p.name).length;
+        const manualCount = manualWinners.filter(mw => mw.prize === p.name).length;
+        const availableCount = p.count - drawnCount - manualCount;
+
+        // 只顯示還有剩餘數量的獎品
+        if (availableCount > 0) {
+          const opt = document.createElement('option');
+          opt.value = p.name;
+          opt.textContent = `${p.name}（剩餘${availableCount}名）`;
+          opt.dataset.count = String(availableCount);
+          prizeSelect.appendChild(opt);
+        }
       });
       // try restore previous if still available
       const opt = Array.from(prizeSelect.options).find(o => o.value === curr);
@@ -1137,22 +1290,233 @@
 
     function renderWinnersList() {
       if (!winnersList) return;
-      if (!winners || winners.length === 0) {
+      // 合併線上抽獎和手動設定的中獎者
+      const allWinners = [...winners, ...manualWinners.map(mw => ({
+        prize: mw.prize,
+        id: mw.id,
+        name: mw.name,
+        ts: mw.ts,
+        isManual: true
+      }))];
+
+      if (!allWinners || allWinners.length === 0) {
         winnersList.innerHTML = '<span class="hint">尚無中獎紀錄。</span>';
         if (btnExportWinners) btnExportWinners.disabled = true;
         return;
       }
       if (btnExportWinners) btnExportWinners.disabled = false;
       const header = `
-        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr; gap:10px; padding:6px 0; font-weight:900; color:var(--brand); border-bottom:1px solid rgba(0,0,0,.06);">
-          <div>獎品種類</div><div>員工編號</div><div>姓名</div>
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr .6fr; gap:10px; padding:6px 0; font-weight:900; color:var(--brand); border-bottom:1px solid rgba(0,0,0,.06);">
+          <div>獎品種類</div><div>員工編號</div><div>姓名</div><div>來源</div>
         </div>`;
-      const rows = winners.map(w => `
-        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr; gap:10px; padding:8px 0; border-bottom:1px dashed rgba(0,0,0,.06);">
-          <div>${w.prize}</div><div>${w.id}</div><div>${w.name}</div>
+      const rows = allWinners.map(w => `
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr .6fr; gap:10px; padding:8px 0; border-bottom:1px dashed rgba(0,0,0,.06);">
+          <div>${w.prize}</div><div>${w.id}</div><div>${w.name}</div><div style="font-size:12px; color:${w.isManual ? 'var(--magenta)' : 'var(--brand)'}; font-weight:700;">${w.isManual ? '手動' : '抽獎'}</div>
         </div>`).join('');
       winnersList.innerHTML = header + rows;
     }
+
+    // ===== Manual Winners Management =====
+    function renderManualWinnersList() {
+      if (!manualWinnersList) return;
+      if (!manualWinners || manualWinners.length === 0) {
+        manualWinnersList.innerHTML = '<span class="hint">尚無手動設定的中獎紀錄。</span>';
+        return;
+      }
+
+      const header = `
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr .8fr auto; gap:10px; padding:6px 0; font-weight:900; color:var(--brand); border-bottom:1px solid rgba(0,0,0,.06);">
+          <div>獎品種類</div><div>員工編號</div><div>姓名</div><div style="text-align:right;">操作</div>
+        </div>`;
+
+      const rows = manualWinners.map((mw, idx) => `
+        <div class="manual-winner-item">
+          <div>${mw.prize}</div>
+          <div>${mw.id}</div>
+          <div>${mw.name}</div>
+          <div class="manual-winner-actions" style="justify-content:flex-end;">
+            <button class="btn-icon" onclick="editManualWinner(${idx})" title="編輯">✏️</button>
+            <button class="btn-icon" onclick="deleteManualWinner(${idx})" title="刪除">🗑️</button>
+          </div>
+        </div>`).join('');
+
+      manualWinnersList.innerHTML = header + rows;
+    }
+
+    function populateManualPrizeSelect() {
+      if (!manualPrizeSelect) return;
+      const curr = manualPrizeSelect.value;
+      manualPrizeSelect.innerHTML = '<option value="">— 請選擇獎品 —</option>';
+
+      prizes.forEach(p => {
+        // 計算已使用數量（包含線上抽獎和手動設定）
+        const drawnCount = winners.filter(w => w.prize === p.name).length;
+        const manualCount = manualWinners.filter(mw => mw.prize === p.name).length;
+        const totalUsed = drawnCount + manualCount;
+        const available = p.count - totalUsed;
+
+        const opt = document.createElement('option');
+        opt.value = p.name;
+        opt.textContent = `${p.name}（總${p.count}名，已用${totalUsed}名，剩餘${available}名）`;
+        opt.dataset.count = String(p.count);
+        opt.dataset.available = String(available);
+        manualPrizeSelect.appendChild(opt);
+      });
+
+      if (curr) {
+        const opt = Array.from(manualPrizeSelect.options).find(o => o.value === curr);
+        if (opt) manualPrizeSelect.value = curr;
+      }
+    }
+
+    function populateManualEmployeeSelect() {
+      if (!manualEmployeeSelect) return;
+      const curr = manualEmployeeSelect.value;
+      manualEmployeeSelect.innerHTML = '<option value="">— 請選擇員工 —</option>';
+
+      participants.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.id} - ${p.name}`;
+        opt.dataset.name = p.name;
+        manualEmployeeSelect.appendChild(opt);
+      });
+
+      if (curr) manualEmployeeSelect.value = curr;
+    }
+
+    function showManualWinnerForm(isEdit = false) {
+      if (!manualWinnerForm) return;
+      manualWinnerForm.style.display = 'block';
+      populateManualPrizeSelect();
+      populateManualEmployeeSelect();
+
+      if (!isEdit) {
+        // 清空表單
+        manualPrizeSelect.value = '';
+        manualEmployeeSelect.value = '';
+        manualEmployeeName.value = '';
+        editingManualWinnerId = null;
+      }
+
+      // 滾動到表單
+      manualWinnerForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function hideManualWinnerForm() {
+      if (!manualWinnerForm) return;
+      manualWinnerForm.style.display = 'none';
+      manualPrizeSelect.value = '';
+      manualEmployeeSelect.value = '';
+      manualEmployeeName.value = '';
+      editingManualWinnerId = null;
+    }
+
+    function saveManualWinner() {
+      const prize = manualPrizeSelect.value;
+      const employeeId = manualEmployeeSelect.value;
+      const employeeName = manualEmployeeName.value;
+
+      if (!prize || !employeeId || !employeeName) {
+        alert('請填寫所有欄位！');
+        return;
+      }
+
+      // 檢查獎品剩餘數量
+      const prizeObj = prizes.find(p => p.name === prize);
+      if (!prizeObj) {
+        alert('找不到該獎品！');
+        return;
+      }
+
+      const drawnCount = winners.filter(w => w.prize === prize).length;
+      const manualCount = manualWinners.filter(mw => mw.prize === prize && mw.id !== editingManualWinnerId).length;
+      const totalUsed = drawnCount + manualCount;
+
+      if (totalUsed >= prizeObj.count) {
+        alert(`獎品「${prize}」的名額已用完！`);
+        return;
+      }
+
+      // 檢查是否重複（同一獎品＋同一員工）
+      const isDuplicate = manualWinners.some((mw, idx) =>
+        mw.prize === prize &&
+        mw.id === employeeId &&
+        (editingManualWinnerId === null || idx !== editingManualWinnerId)
+      );
+
+      if (isDuplicate) {
+        alert(`員工「${employeeName}（${employeeId}）」已經在獎品「${prize}」的手動中獎名單中！`);
+        return;
+      }
+
+      if (editingManualWinnerId !== null) {
+        // 編輯模式
+        manualWinners[editingManualWinnerId] = {
+          prize,
+          id: employeeId,
+          name: employeeName,
+          ts: Date.now()
+        };
+      } else {
+        // 新增模式
+        manualWinners.push({
+          prize,
+          id: employeeId,
+          name: employeeName,
+          ts: Date.now()
+        });
+      }
+
+      saveManualWinners();
+      renderManualWinnersList();
+      renderWinnersList();
+      populatePrizeSelect(); // 更新線上抽獎的獎品選單
+      hideManualWinnerForm();
+    }
+
+    window.editManualWinner = function (idx) {
+      if (idx < 0 || idx >= manualWinners.length) return;
+
+      editingManualWinnerId = idx;
+      const mw = manualWinners[idx];
+
+      showManualWinnerForm(true);
+      manualPrizeSelect.value = mw.prize;
+      manualEmployeeSelect.value = mw.id;
+      manualEmployeeName.value = mw.name;
+    };
+
+    window.deleteManualWinner = function (idx) {
+      if (idx < 0 || idx >= manualWinners.length) return;
+
+      const mw = manualWinners[idx];
+      if (!confirm(`確定要刪除「${mw.name}（${mw.id}）」在獎品「${mw.prize}」的中獎紀錄嗎？`)) {
+        return;
+      }
+
+      const deletedPrize = mw.prize;
+      manualWinners.splice(idx, 1);
+      saveManualWinners();
+      renderManualWinnersList();
+      renderWinnersList();
+
+      // Check if prize should be unmarked as drawn
+      const prizeIdx = prizes.findIndex(p => p.name === deletedPrize);
+      if (prizeIdx >= 0) {
+        const drawnCount = winners.filter(w => w.prize === deletedPrize).length;
+        const manualCount = manualWinners.filter(mw => mw.prize === deletedPrize).length;
+        const totalUsed = drawnCount + manualCount;
+
+        // Unmark as drawn if there's available quota
+        if (totalUsed < prizes[prizeIdx].count) {
+          prizes[prizeIdx].drawn = false;
+          savePrizes(prizes);
+        }
+      }
+
+      populatePrizeSelect(); // 更新線上抽獎的獎品選單
+    };
 
     // ===== CSV Upload =====
     function parseCSV(text) {
@@ -1253,13 +1617,14 @@
       const pCount = participants.length;
       const prizeCount = prizes.length;
       const winnerCount = winners.length;
+      const manualCount = manualWinners.length;
 
-      if (!pCount && !prizeCount && !winnerCount) {
+      if (!pCount && !prizeCount && !winnerCount && !manualCount) {
         alert('目前沒有可清除的資料。');
         return;
       }
 
-      if (confirm(`確定要清除所有資料嗎？\n\n參與者：${pCount} 位\n獎品種類：${prizeCount} 種\n中獎紀錄：${winnerCount} 筆\n\n注意：清除後抽出人數 N 將歸 0，需重新上傳 CSV 才能抽獎。`)) {
+      if (confirm(`確定要清除所有資料嗎？\n\n參與者：${pCount} 位\n獎品種類：${prizeCount} 種\n中獎紀錄：${winnerCount} 筆\n手動設定中獎：${manualCount} 筆\n\n注意：清除後抽出人數 N 將歸 0，需重新上傳 CSV 才能抽獎。`)) {
         // 清參與者
         clearParticipants();
         // 清獎品與中獎紀錄
@@ -1267,6 +1632,7 @@
         localStorage.removeItem(WINNERS_KEY);
         prizes = [];
         winners = [];
+        clearManualWinners();
         populatePrizeSelect();
         renderWinnersList();
 
@@ -1316,21 +1682,23 @@
     // ===== Export Winners CSV =====
     if (btnExportWinners) {
       btnExportWinners.addEventListener('click', () => {
-        if (!winners || winners.length === 0) {
+        const allWinners = [...winners, ...manualWinners.map(mw => ({ ...mw, isManual: true }))];
+        if (!allWinners || allWinners.length === 0) {
           alert('目前沒有中獎紀錄可匯出。');
           return;
         }
         // CSV header
-        const header = ['日期', '獎品種類', '員工編號', '姓名'];
+        const header = ['日期', '獎品種類', '員工編號', '姓名', '來源'];
         const lines = [header];
         const toCSV = (v) => '"' + String(v).replace(/"/g, '""') + '"';
-        for (const w of winners) {
+        for (const w of allWinners) {
           const d = w.ts ? new Date(w.ts) : new Date();
           const y = d.getFullYear();
           const m = String(d.getMonth() + 1).padStart(2, '0');
           const day = String(d.getDate()).padStart(2, '0');
           const ymd = `${y}${m}${day}`; // YYYYMMDD
-          lines.push([ymd, w.prize, w.id, w.name]);
+          const source = w.isManual ? '手動' : '抽獎';
+          lines.push([ymd, w.prize, w.id, w.name, source]);
         }
         const csv = lines.map(row => row.map(toCSV).join(',')).join('\n');
         const bom = '\uFEFF';
@@ -1566,7 +1934,11 @@
     function getEligibleParticipants() {
       if (!participants || participants.length === 0) return [];
       if (allowRepeat) return [...participants];
-      const wonIds = new Set(winners.map(w => String(w.id)));
+      // 合併線上抽獎和手動設定的中獎者ID
+      const wonIds = new Set([
+        ...winners.map(w => String(w.id)),
+        ...manualWinners.map(mw => String(mw.id))
+      ]);
       return participants.filter(p => !wonIds.has(String(p.id)));
     }
 
@@ -1679,10 +2051,17 @@
       saveWinners();
       renderWinnersList();
 
-      // Mark prize as drawn and update select
+      // Check if prize is fully used up and mark as drawn
       const idx = prizes.findIndex(p => p.name === prizeName);
       if (idx >= 0) {
-        prizes[idx].drawn = true;
+        const drawnCount = winners.filter(w => w.prize === prizeName).length;
+        const manualCount = manualWinners.filter(mw => mw.prize === prizeName).length;
+        const totalUsed = drawnCount + manualCount;
+
+        // Only mark as drawn if all quota is used
+        if (totalUsed >= prizes[idx].count) {
+          prizes[idx].drawn = true;
+        }
         savePrizes(prizes);
       }
       populatePrizeSelect();
@@ -1733,10 +2112,35 @@
       });
     }
 
+    // Manual Winners Events
+    if (btnAddManualWinner) {
+      btnAddManualWinner.addEventListener('click', () => showManualWinnerForm(false));
+    }
+
+    if (btnSaveManual) {
+      btnSaveManual.addEventListener('click', saveManualWinner);
+    }
+
+    if (btnCancelManual) {
+      btnCancelManual.addEventListener('click', hideManualWinnerForm);
+    }
+
+    if (manualEmployeeSelect) {
+      manualEmployeeSelect.addEventListener('change', () => {
+        const selected = manualEmployeeSelect.options[manualEmployeeSelect.selectedIndex];
+        if (selected && selected.dataset.name) {
+          manualEmployeeName.value = selected.dataset.name;
+        } else {
+          manualEmployeeName.value = '';
+        }
+      });
+    }
+
     // First paint
     loadParticipants();
     loadPrizes();
     loadWinners();
+    loadManualWinners();
     validateMN();
     clearResultsUI();
     // Decorative idle balls
